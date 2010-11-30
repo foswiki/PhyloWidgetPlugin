@@ -10,7 +10,6 @@ pub/System/PhyloWidgetExample/Tree.nex 0644
 pub/System/PhyloWidgetPlugin/bare.html 0644
 pub/System/PhyloWidgetPlugin/img/pw.ico 0644
 pub/System/PhyloWidgetPlugin/index.html 0644
-pub/System/PhyloWidgetPlugin/jquery.phylowidget.uncompressed.js 0644
 pub/System/PhyloWidgetPlugin/lib/core.jar 0644
 pub/System/PhyloWidgetPlugin/lib/freeloader.jar 0644
 pub/System/PhyloWidgetPlugin/lib/itext.jar 0644
@@ -20,7 +19,9 @@ pub/System/PhyloWidgetPlugin/lib/phylowidget.jar 0644
 pub/System/PhyloWidgetPlugin/minimal.txt 0644
 pub/System/PhyloWidgetPlugin/phylotest.html 0644
 pub/System/PhyloWidgetPlugin/scripts/phylopopup.js 0644
+pub/System/PhyloWidgetPlugin/scripts/phylopopup.js.gz 0644
 pub/System/PhyloWidgetPlugin/scripts/phylowidget.js 0644
+pub/System/PhyloWidgetPlugin/scripts/phylowidget.js.gz 0644
 pub/System/PhyloWidgetPlugin/style.css 0644
 pub/System/PhyloWidgetPlugin/test.html 0644
 pub/System/PhyloWidgetPlugin/zip/phylowidget_src.zip 0644
