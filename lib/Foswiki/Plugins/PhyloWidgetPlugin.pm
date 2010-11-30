@@ -87,7 +87,7 @@ our $VERSION = '$Rev$';
 # date    - a date in 1 Jun 2009 format. Three letter English month names only.
 # Note: it's important that this string is exactly the same in the extension
 # topic - if you use %$RELEASE% with BuildContrib this is done automatically.
-our $RELEASE = '0.1.1';
+our $RELEASE = '0.1.2';
 
 # Short description of this plugin
 # One line description, is shown in the %SYSTEMWEB%.TextFormattingRules topic:
@@ -238,7 +238,12 @@ sub getAttachUrl{
 }
 sub getNHXfromNEX{
     my ( $session, $subject, $verb, $responses) = @_;
-    my $requestObject = Foswiki::Func::getRequestObject();
+    my $requestObject;
+	if (defined &Foswiki::Func::getRequestObject) {
+		$requestObject = Foswiki::Func::getRequestObject();
+	} else {
+		$requestObject = Foswiki::Func::getCgiQuery();
+	}
     my $web = $requestObject->param('web');
     my $topic = $requestObject->param('topic');
 #     my $topic = $requestObject->param('topic');
@@ -380,12 +385,19 @@ Since Foswiki::Plugins::VERSION = '2.0'
 =cut
 
 sub postRenderingHandler {
+	my $requestObject;
+
+	if (defined &Foswiki::Func::getRequestObject) {
+		$requestObject = Foswiki::Func::getRequestObject();
+	} else {
+		$requestObject = Foswiki::Func::getCgiQuery();
+	}
     # You can work on $text in place by using the special perl
     # variable $_[0]. These allow you to operate on $text
     # as if it was passed by reference; for example:
-    if (Foswiki::Func::isTrue(Foswiki::Func::getRequestObject()->param('phylofixamps'), 0) ){
-	use HTML::Entities;
-	decode_entities($_[0]);
+    if (Foswiki::Func::isTrue($requestObject->param('phylofixamps'), 0) ){
+		use HTML::Entities;
+		decode_entities($_[0]);
     }
 
     return;
