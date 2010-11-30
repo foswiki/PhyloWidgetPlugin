@@ -11,7 +11,7 @@
 %$INSTALL_INSTRUCTIONS%
 <!--
 One line description, required for extensions repository catalog.
-* Set SHORTDESCRIPTION = %$SHORTDESCRIPTION%
+   * Set SHORTDESCRIPTION = %$SHORTDESCRIPTION%
 -->
 
 ---++ Plugin Info
