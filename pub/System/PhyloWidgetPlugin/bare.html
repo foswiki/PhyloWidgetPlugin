@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+<title>PhyloWidget</title>
+
+<link rel="stylesheet" href="style.css"/>
+<link rel="shortcut icon" href="img/pw.ico"/>
+<script src="scripts/phylowidget.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+//	var totalWidth = PhyloWidget.getWidth()+300+50;
+//	document.write('<div id="content-wrapper" style="width:'+totalWidth+'px;">');
+</script>
+<!-- <div id="content-wrapper"> -->
+<script type="text/javascript">
+	document.write('<div id="PhyloWidget" style="width:'+PhyloWidget.getWidth()+'px;">');
+</script>
+<!-- BEGIN: JAVASCRIPT INSERTION -->
+<script type="text/javascript">
+	PhyloWidget.loadWidget('PhyloWidget');
+//	PhyloWidget.loadToolbox('toolbox');
+	//PhyloWidget.loadWidgetPanel();
+</script>
+<!-- END: JAVASCRIPT INSERTION -->
+</body>
+</html>

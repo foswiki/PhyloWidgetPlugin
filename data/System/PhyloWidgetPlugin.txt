@@ -1,0 +1,24 @@
+%META:TOPICPARENT{name="Plugins"}%
+---+ PhyloWidget Plugin
+
+%SHORTDESCRIPTION%
+
+%INCLUDE{"VarPHYLOWIDGET"}%
+
+%INCLUDE{"VarNEXUSTREES"}%
+
+---++ Installation
+%$INSTALL_INSTRUCTIONS%
+
+---++ Plugin Info
+
+|  Author: | Foswiki:Main.TemiVarghese |
+|  Copyright: | &copy; 2010, Taxonomy Research & Information Network [[http://trin.org.au]] |
+|  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
+|  Release: | %$RELEASE% |
+|  Version: | %$VERSION% |
+|  Change&nbsp;History: | <!-- versions below in reverse order -->&nbsp; |
+|  XX Mmm 20XX (1.0) | Description of change |
+|  Home: | http://foswiki.org/Extensions/%TOPIC% |
+|  Support: | http://foswiki.org/Support/%TOPIC% |
+|  Dependencies: | %$DEPENDENCIES% |

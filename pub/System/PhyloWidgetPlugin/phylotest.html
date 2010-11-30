@@ -1,0 +1,27 @@
+<html>
+<head>
+<script src='http://git.trin.org.au/phylowidget/phylowidget/scripts/phylowidget.js'></script>
+<script>
+PhyloWidget.codebase = 'http://git.trin.org.au/phylowidget/phylowidget/lib';
+var params = {
+	width:500,
+	height:700,
+	tree:'http://testwiki.trin.org.au/Sandbox/MangrovesTree?skin=text&raw=on'
+};
+//tree:'file:///home/var03f/mangroves.txt'
+function doAlert(str){
+	alert(str);
+}
+</script>
+</head>
+<body>
+<div id="my_div" style="border: 2px solid red;"></div>
+<script>
+//tree:'http://git.trin.org.au/phylowidget/phylowidget/mangrovenewick'
+//http://testwiki.trin.org.au/Sandbox/MangrovesTree?skin=text
+PhyloWidget.loadWidget('my_div',params);
+//PhyloWidget.changeSetting('tree','http://git.trin.org.au/phylowidget/phylowidget/mangroves.txt');
+</script>
+<body>
+
+<html>

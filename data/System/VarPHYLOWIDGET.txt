@@ -1,0 +1,28 @@
+%META:TOPICINFO{author="ProjectContributor" format="1.1" version="$Rev$"}%
+%META:TOPICPARENT{name="PhyloWidgetPlugin"}%
+#VarPHYLOWIDGET
+---+++ PHYLOWIDGET{"Topic"} -- display phylogeny
+   * PHYLOWIDGET macro is used to display a newick formatted tree. The tree could be content of a topic or an attachment on the Foswiki instance. It can also accepts resource hosted on an external url.
+   * Syntax: <verbatim class="tml">%PHYLOWIDGET{"Web.Topic"
+   attachment="example.nex"
+   url="www.treebase.org/nexus.nex"
+   height="800"
+   width="600"}%</verbatim>
+   * Supported parameters:
+    | *Parameter:* | *Description:* | *Default:* |
+    | ="Web.Topic"= | Topic name whose content is either in nexus format or has an nexus file attachment. | - |
+    | =attachment="example.nex"= | A nexus formatted file attachment. | - |
+    | =url="www.treebase.org/nexus.nex"= | Url to an external resource can be included in this parameter. | - |
+    | =height="800"= | Sets the height of the PhyloWidget applet. | - |
+    | =width="600"= | Sets the width of the PhyloWidget applet. | - |
+    * Examples: <verbatim class="tml">
+    %PHYLOWIDGET{"%SYSTEMWEB%.PhyloWidgetExample"
+    height="495"
+    width="420"}%</verbatim>
+    * Result (if installed):
+	%PHYLOWIDGET{"%SYSTEMWEB%.PhyloWidgetExample"
+	height="495"
+	width="420"
+	}%
+   See also: [[PhyloWidgetPlugin]], [[VarNEXUSTREES][NEXUSTREES]]
+<!--%JQREQUIRE{"chili"}%-->

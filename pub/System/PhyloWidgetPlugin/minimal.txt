@@ -1,0 +1,46 @@
+<html>
+<body>
+<object classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93" height="500" width="500" id="pulpcore_object">
+  <param value="org.freeloader.FreeLoader" name="code"/>
+  <param value="core.jar,freeloader.jar,itext-bak.jar,phylowidget.jar" name="archive"/>
+  <param value="#FFFFFF" name="boxbgcolor"/>
+  <param value="#3399CC" name="boxfgcolor"/>
+  <param value="" name="boxmessage"/>
+  <param value="-Dsun.awt.noerasebackground=true" name="java_arguments"/>
+  <param value="http://www.phylowidget.org/full/lib" name="codebase"/>
+  <param value="PhyloWidget" name="name"/>
+  <param value="Loading PhyloWidget..." name="FreeLoader_loadingMessage"/>
+  <param value="true" name="mayscript"/>
+  <param value="loading.gif" name="image"/>
+  <param value="true" name="progressbar"/>
+  <param value="50" name="FreeLoader_minimumLoadingTime"/>
+  <param value="core.jar,freeloader.jar,itext-bak.jar,phylowidget.jar" name="cache_archive"/>
+  <param value="core.jar,freeloader.jar,itext-bak.jar,phylowidget.jar" name="cache_archive_ex"/>
+  <param value="org.phylowidget.PhyloWidget" name="FreeLoader_mainClass"/>
+  <param value="(a,(b,c));" name="tree"/>
+  <param value="true" name="scriptable"/>
+  <comment>
+  <applet height="500" width="500" id="pulpcore_object">
+	  <param value="org.freeloader.FreeLoader" name="code"/>
+	  <param value="core.jar,freeloader.jar,itext-bak.jar,phylowidget.jar" name="archive"/>
+	  <param value="#FFFFFF" name="boxbgcolor"/>
+	  <param value="#3399CC" name="boxfgcolor"/>
+	  <param value="" name="boxmessage"/>
+	  <param value="-Dsun.awt.noerasebackground=true" name="java_arguments"/>
+	  <param value="http://www.phylowidget.org/full/lib" name="codebase"/>
+	  <param value="PhyloWidget" name="name"/>
+	  <param value="Loading PhyloWidget..." name="FreeLoader_loadingMessage"/>
+	  <param value="true" name="mayscript"/>
+	  <param value="loading.gif" name="image"/>
+	  <param value="true" name="progressbar"/>
+	  <param value="50" name="FreeLoader_minimumLoadingTime"/>
+	  <param value="core.jar,freeloader.jar,itext-bak.jar,phylowidget.jar" name="cache_archive"/>
+	  <param value="core.jar,freeloader.jar,itext-bak.jar,phylowidget.jar" name="cache_archive_ex"/>
+	  <param value="org.phylowidget.PhyloWidget" name="FreeLoader_mainClass"/>
+	  <param value="(a,(b,c));" name="tree"/>
+	  <param value="true" name="scriptable"/>
+</applet>
+  </comment>
+</object>
+</body>
+</html>

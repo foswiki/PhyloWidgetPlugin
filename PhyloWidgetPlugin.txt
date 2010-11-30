@@ -1,0 +1,29 @@
+%META:TOPICPARENT{name="Plugins"}%
+---+ PhyloWidget Plugin
+
+%SHORTDESCRIPTION%
+
+%INCLUDE{"VarPHYLOWIDGET"}%
+
+%INCLUDE{"VarNEXUSTREES"}%
+
+---++ Installation
+You do not need to install anything in the browser to use this extension. The following instructions are for the administrator who installs the extension on the server.
+
+Open configure, and open the "Extensions" section. Use "Find More Extensions" to get a list of available extensions. Select "Install".
+
+If you have any problems, or if the extension isn't available in =configure=, then you can still install manually from the command-line. See http://foswiki.org/Support/ManuallyInstallingExtensions for more help.
+
+
+---++ Plugin Info
+
+|  Author: | Foswiki:Main.TemiVarghese |
+|  Copyright: | &copy; 2010, Taxonomy Research & Information Network [[http://trin.org.au]] |
+|  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
+|  Release: | 0.1.1 |
+|  Version: | 20101130 (2010-11-30) |
+|  Change&nbsp;History: | <!-- versions below in reverse order -->&nbsp; |
+|  XX Mmm 20XX (1.0) | Description of change |
+|  Home: | http://foswiki.org/Extensions/%TOPIC% |
+|  Support: | http://foswiki.org/Support/%TOPIC% |
+|  Dependencies: | <table class="foswikiTable" border="1"><tr><th>Name</th><th>Version</th><th>Description</th></tr><tr><td align="left">Bio::NEXUS</td><td align="left">&gt;=0</td><td align="left">Required</td></tr><tr><td align="left">Foswiki::Plugins::DBCachePlugin</td><td align="left">&gt;=0</td><td align="left">Optional, For examples</td></tr></table> |

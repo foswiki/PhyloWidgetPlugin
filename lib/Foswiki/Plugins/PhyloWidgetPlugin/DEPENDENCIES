@@ -1,0 +1,2 @@
+Bio::NEXUS,>=0,cpan,Required
+Foswiki::Plugins::DBCachePlugin,>=0,plugin,Optional, For examples

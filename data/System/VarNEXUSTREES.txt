@@ -1,0 +1,38 @@
+%META:TOPICINFO{author="ProjectContributor" format="1.1" version="$Rev$"}%
+%META:TOPICPARENT{name="PhyloWidgetPlugin"}%
+#VarNEXUSTREES
+---+++ NEXUSTREES{"Topic"} -- display phylogeny
+* NEXUSTREES macro is used to view the tree block of a nexus file. It contains two panel. The left panel display PhyloWidget applet. The right panel contains a clickable tree list. In order for PhyloWidget to render the tree, click on the tree name.
+* Syntax: <verbatim class="tml">%NEXUSTREES{"Web.Topic"
+attachment="example.nex"
+header="<h3>Tree List</h3>$n"
+format="   * $treeid $treeName"
+footer="<h3>End</h3>"
+separator="$n"
+}%</verbatim>
+* Supported parameters:
+    | *Parameter:* | *Description:* | *Default:* |
+    | ="Web.Topic"= | Topic name whose content is either in nexus format or has an nexus file attachment. | - |
+    | =attachment="example.nex"= | A nexus formatted file attachment. | - |
+    | =header="&lt;h3&gt;Tree List&lt;/h3&gt;$n"= | String that will decorate the value of format parameter. | - |
+    | =format="   * $treeid $treeName"= | This string is repeated according to the number of trees in the nexus file. $treeid & $treeName are replace with serial number and tree name. | - |
+    | =footer="&lt;h3&gt;End&lt;/h3&gt;"= | String that will decorate the value of format parameter. | - |
+    | =separator="$n"= | This value is used to separate format parameter values. It can contain Foswiki recognised parameters. | - |
+    * Examples 1: <verbatim class="tml">%NEXUSTREES{"%SYSTEMWEB%/PhyloWidgetExample"
+    attachment="Tree.nex"
+    header="<h3>Tree List</h3>$n"
+    format="   * <a href='http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/getNHX?web=System;topic=System.PhyloWidgetExample;attachment=Tree.nex;tree=$treeid'>$treeName</a>"
+    footer="<h3>***********</h3>"
+    separator="$n"
+    }%</verbatim>
+   * Result (if installed): %NEXUSTREES{"%SYSTEMWEB%/PhyloWidgetExample"
+   attachment="Tree.nex"
+   header="<h3>Tree List</h3>$n"
+   format="   * <a href='http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/getNHX?web=System;topic=System.PhyloWidgetExample;attachment=Tree.nex;tree=$treeid'>$treeName</a>"
+   footer="<h3>***********</h3>$n"
+   separator="$n"
+  }%
+    * Examples 2: [[ViewTrees]]
+    See also: [[PhyloWidgetPlugin]], [[VarNEXUSTREES][PHYLOWIDGET]], [[ViewTrees]]
+    <!--%JQREQUIRE{"chili"}%-->
+    

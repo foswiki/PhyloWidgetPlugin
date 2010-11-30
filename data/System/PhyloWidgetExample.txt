@@ -1,0 +1,10 @@
+%DBRECURSE{
+    "UserDocumentationCategory"
+    web="System"
+    header="("
+    format="<nop>$topic[&&NHX:g=$web/$topic]"
+    subheader="("
+    subfooter=")"
+    separator=","
+    footer=");"
+}%
