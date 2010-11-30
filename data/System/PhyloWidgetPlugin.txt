@@ -1,5 +1,5 @@
 %META:TOPICPARENT{name="Plugins"}%
----+ PhyloWidget Plugin
+---+ !PhyloWidget Plugin
 
 %SHORTDESCRIPTION%
 
@@ -9,16 +9,19 @@
 
 ---++ Installation
 %$INSTALL_INSTRUCTIONS%
+<!--
+One line description, required for extensions repository catalog.
+* Set SHORTDESCRIPTION = %$SHORTDESCRIPTION%
+-->
 
 ---++ Plugin Info
-
 |  Author: | Foswiki:Main.TemiVarghese |
 |  Copyright: | &copy; 2010, Taxonomy Research & Information Network [[http://trin.org.au]] |
 |  License: | GPL ([[http://www.gnu.org/copyleft/gpl.html][GNU General Public License]]) |
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change&nbsp;History: | <!-- versions below in reverse order -->&nbsp; |
-|  XX Mmm 20XX (1.0) | Description of change |
+|  30 Nov 2010 (0.1.1) | Foswikitask:10044 - initial version |
 |  Home: | http://foswiki.org/Extensions/%TOPIC% |
 |  Support: | http://foswiki.org/Support/%TOPIC% |
 |  Dependencies: | %$DEPENDENCIES% |
