@@ -179,13 +179,20 @@ sub initPlugin {
     return 1;
 }
 sub LISTNEXUSTREES{
-    my($session, $params, $topic, $web, $topicObject) = @_;
+    my($session, $params, $Atopic, $Aweb, $topicObject) = @_;
     my @format = ();
     my $url = getAttachUrl('',$params->{'_DEFAULT'},$params->{'attachment'});
+    my $web;
+    my $topic;
+    my $attachment = $params->{'attachment'};
+    my $content;
+    
+    ($web,$topic) = Foswiki::Func::normalizeWebTopicName('',$params->{'_DEFAULT'});
+    $content = Foswiki::Func::readAttachment($web,$topic,$attachment);
 #     my $url  = Foswiki::Func::getUrlHost()."$pubUrlPath/$topic/$attachment";
 #     my $url  = Foswiki::Func::getUrlHost()."$pubUrlPath//$web/$topic/$attachment";
-    my $ua = LWP::UserAgent->new();
-    my $response = $ua->get("$url");
+#     my $ua = LWP::UserAgent->new();
+#     my $response = $ua->get("$url");
     my $nexus = Bio::NEXUS->new();
 #     my $separator =  $params->{separator};
     
@@ -193,9 +200,9 @@ sub LISTNEXUSTREES{
 # return "<h1>Phylowidget! :)</h1><pre>" . Dumper($requestObject->param()) . '</pre>';
 #     return $url;
 #    my $str='';
-    if ($response->is_success)
+    if ($content)
     {
-    $nexus->read({format => 'string','param' => $response->content}); # or whatever\
+    $nexus->read({format => 'string','param' => $content}); # or whatever\
     my @trees = @{$nexus->get_block("trees")->get_trees()};
     my $treeNumber = $#trees;
 #     $str = "$treeNumber  :: ";
@@ -252,16 +259,19 @@ sub getNHXfromNEX{
     my $url = getAttachUrl($web,$topic,$attachment);
 #     my $url  = Foswiki::Func::getUrlHost()."$pubUrlPath/$topic/$attachment";
 #     my $url  = Foswiki::Func::getUrlHost()."$pubUrlPath//$web/$topic/$attachment";
-    my $ua = LWP::UserAgent->new();
-    my $response = $ua->get("$url");
+#     my $ua = LWP::UserAgent->new();
+#     my $response = $ua->get("$url");
     my $nexus = Bio::NEXUS->new();
     my $atree ;
+    my $content;
+
+    $content = Foswiki::Func::readAttachment($web,$topic,$attachment);
 #      use Data::Dumper;
 # return "<h1>Phylowidget! :)</h1><pre>" . Dumper($requestObject->param()) . '</pre>';
 #     return $url;
-    if ($response->is_success)
+    if ($content)
     {
-    $nexus->read({format => 'string','param' => $response->content}); # or whatever
+    $nexus->read({format => 'string','param' => $content}); # or whatever
 #     return @{$nexus->get_block("trees")->get_trees()}[$tree]->as_string();
 #     try{
     eval { $atree = @{$nexus->get_block("trees")->get_trees()}[$tree]->as_string();} or croak return "ERROR: Index out of range.";
