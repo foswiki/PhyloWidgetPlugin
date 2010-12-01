@@ -4,7 +4,7 @@ data/System/PhyloWidgetExample.txt 0644
 data/System/PhyloWidgetViewHelper.txt 0644
 data/System/VarNEXUSTREES.txt 0644
 data/System/VarPHYLOWIDGET.txt 0644
-data/System/ViewTrees.txt 0644
+data/System/PhyloViewTrees.txt 0644
 lib/Foswiki/Plugins/PhyloWidgetPlugin.pm 0644
 pub/System/PhyloWidgetExample/Tree.nex 0644
 pub/System/PhyloWidgetPlugin/bare.html 0644

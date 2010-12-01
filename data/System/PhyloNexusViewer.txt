@@ -5,7 +5,7 @@
    * Set AATTACH=%URLPARAM{"qAttachment" default="%attachment%"}%
 -->
 <div id="phylowidget" style="float:left;">
-%PHYLOWIDGET{width="420" height="495"}%
+%PHYLOWIDGET{width="420" height="495" useBranchLengths="true"}%
 </div>
 
 <div id="treeList" style="float: right; width: 425px; height: 500px; border: 2px solid black; padding: 3px; overflow: scroll;">

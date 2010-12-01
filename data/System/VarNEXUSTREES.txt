@@ -32,7 +32,7 @@ separator="$n"
    footer="<h3>***********</h3>$n"
    separator="$n"
   }%
-    * Examples 2: [[ViewTrees]]
-    See also: [[PhyloWidgetPlugin]], [[VarNEXUSTREES][PHYLOWIDGET]], [[ViewTrees]]
+    * Examples 2: [[PhyloViewTrees]]
+    See also: [[PhyloWidgetPlugin]], [[VarNEXUSTREES][PHYLOWIDGET]], [[PhyloViewTrees]]
     <!--%JQREQUIRE{"chili"}%-->
     

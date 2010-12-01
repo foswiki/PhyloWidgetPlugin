@@ -342,9 +342,15 @@ sub _EXAMPLETAG {
 #       $url = $params->{'url'};
 	push @tree , "tree:'$params->{'url'}'" if $params->{'url'};
     }
-    push @tree ,"height:$params->{'height'}" if $params->{'height'};
-    push @tree ,"width:$params->{'width'}" if $params->{'width'};
-    push @tree ,"menu:'$params->{'menu'}'" if $params->{'menu'};
+    while ( my ( $key, $value ) = each( %{$params} ) ) {
+    push( @tree, "$key: '$value'" )
+    if ( $key ne "_RAW" )
+    and ( $key ne "_DEFAULT" )
+    and ( $key ne "url" );
+    }
+#     push @tree ,"height:$params->{'height'}" if $params->{'height'};
+#     push @tree ,"width:$params->{'width'}" if $params->{'width'};
+#     push @tree ,"menu:'$params->{'menu'}'" if $params->{'menu'};
 #     my $urls = 'url';
 
 #     foreach my $term (@terms){

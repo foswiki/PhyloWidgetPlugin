@@ -23,6 +23,7 @@
 	%PHYLOWIDGET{"%SYSTEMWEB%.PhyloWidgetExample"
 	height="495"
 	width="420"
+	useBranchLengths="true"
 	}%
    See also: [[PhyloWidgetPlugin]], [[VarNEXUSTREES][NEXUSTREES]]
 <!--%JQREQUIRE{"chili"}%-->
