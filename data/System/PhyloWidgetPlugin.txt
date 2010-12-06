@@ -7,6 +7,11 @@
 
 %INCLUDE{"VarNEXUSTREES"}%
 
+---++ Known Issues
+If the tree to be displayed is not public (requires authentication), you must make sure the website uses Apache Authentication. For example, if the tree is hosted on secure Foswiki instance, make sure that you have configured the site using the setting ={LoginManager} = ApacheLogin=.
+
+You could also run into trouble if the secure website holding the tree has a self signed certificate, or if the certificate is signed by an authority unknown to Java. In such cases, add the certificate to JRE keystore using keytool command.
+
 ---++ Installation
 %$INSTALL_INSTRUCTIONS%
 <!--
