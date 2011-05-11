@@ -1,2 +1,5 @@
 Bio::NEXUS,>=0,cpan,Required
+Bio::TreeIO,>=0,cpan,Required
+Bio::NexmlIO,>=0,cpan,Required
+Bio::Phylo,>=0,cpan,Required
 Foswiki::Plugins::DBCachePlugin,>=0,plugin,Optional, For examples

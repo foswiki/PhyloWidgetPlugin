@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" format="1.1" version="$Rev$"}%
+%META:TOPICINFO{author="BaseUserMapping_666" comment="reprev" date="1305079398" format="1.1" reprev="16" version="16"}%
 %META:TOPICPARENT{name="PhyloWidgetPlugin"}%
 #VarPHYLOWIDGET
 ---+++ PHYLOWIDGET{"Topic"} -- display phylogeny
@@ -26,10 +26,132 @@
 	width="420"
 	useBranchLengths="true"
 	}%
+<!--	<div id="loading"><img sytle="justify:centre;" src="%PUBURL%/System/PhyloWidgetPlugin/loading.gif"/>
+	</div>-->
 	</div>
    See also: [[PhyloWidgetPlugin]], [[VarNEXUSTREES][NEXUSTREES]]
-%META:FIELD{name="count" title="number of requests" value="73"}%
+<!--%JQREQUIRE{"chili"}%-->
+<!--
+%STARTSECTION{"jscode"}%
+
+function processClade(clade,phylo){
+var form = $("#cladeform");
+form.find("[name ='clade']").attr('value',clade);
+form.find("[name ='theweb']").attr('value',foswiki.web);
+form.find("[name ='thetopic']").attr('value',foswiki.topic);
+form.find("[name ='phylo']").attr('value',phylo);
+form.submit();
+//clade= escape(clade);
+//var url = 'http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/processClade?clade=' + clade + ';theweb=' + foswiki.web + ';thetopic=' + foswiki.topic + ';phylo='+phylo+';';
+//window.location = url;
+
+//$.get('http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/processClade',{'clade':clade,'theweb':foswiki.web,'thetopic':foswiki.topic,'phylo':phylo,function(data){ 
+//alert('processing is now complete:'+data);
+
+//window.location = data;
+//}});
+}
+
+%ENDSECTION{"jscode"}%
+-->
+%STARTSECTION{"cladeform"}%
+<form id="cladeform" action="%SCRIPTURL{"rest"}%/PhyloWidgetPlugin/processClade" method="post">
+<input name="clade" type="hidden" value=""/>
+<input name="theweb" type="hidden" value=""/>
+<input name="thetopic" type="hidden" value=""/>
+<input name="phylo" type="hidden" value=""/>
+</form>
+%ENDSECTION{"cladeform"}%
+<!-- %{ADDTOZONE{"script" 
+text="
+$(document).ready(function(){
+$('<div id=\"overlay\"/>').css({
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: $(window).height() + 'px',
+        background: 'white url(http://peperomia-bp/temi/pub/System/PhyloWidgetPlugin/loading.gif) no-repeat center'
+    }).hide().appendTo('body');
+  var p = $('#phylo');
+  $('#overlay').hide()
+  .ajaxStart(function(){
+    $('#overlay').show();
+  })
+  .ajaxStop(function() {
+    $('#overlay').hide();
+  });
+});
+function processClade(clade,phylo){
+//alert(clade);
+clade= escape(clade);
+var url = 'http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/processClade?clade=' + clade + ';theweb=' + foswiki.web + ';thetopic=' + foswiki.topic + ';phylo='+phylo+';';
+window.location = url;
+//$.get('http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/processClade',{'clade':clade,'theweb':foswiki.web,'thetopic':foswiki.topic,'phylo':phylo,function(data){ 
+//alert('processing is now complete:'+data);
+
+//window.location = data;
+//}});
+}
+"}% -->
+---+++ Request 166
+See [[SystemVarPHYLOWIDGET166]] 
+---+++ Request 167
+See [[SystemVarPHYLOWIDGET167]]
+
+---+++ Request 168
+See [[SystemVarPHYLOWIDGET168]] 
+---+++ Request 169
+See [[SystemVarPHYLOWIDGET169]]
+
+---+++ Request 170
+See [[SystemVarPHYLOWIDGET170]]
+
+---+++ Request 171
+See [[SystemVarPHYLOWIDGET171]]
+
+---+++ Request 172
+See [[SystemVarPHYLOWIDGET172]] 
+---+++ Request 173
+See [[SystemVarPHYLOWIDGET173]]
+ 
+---+++ Request 174
+See [[SystemVarPHYLOWIDGET174]] 
+---+++ Request 175
+See [[SystemVarPHYLOWIDGET175]] 
+---+++ Request 176
+See [[SystemVarPHYLOWIDGET176]] 
+---+++ Request 177
+See [[SystemVarPHYLOWIDGET177]] 
+---+++ Request 178
+See [[SystemVarPHYLOWIDGET178]] 
+---+++ Request 179
+See [[SystemVarPHYLOWIDGET179]] 
+---+++ Request 180
+See [[SystemVarPHYLOWIDGET180]] 
+---+++ Request 181
+See [[SystemVarPHYLOWIDGET181]] 
+---+++ Request 182
+See [[SystemVarPHYLOWIDGET182]] 
+---+++ Request 183
+See [[SystemVarPHYLOWIDGET183]] 
+---+++ Request 184
+See [[SystemVarPHYLOWIDGET184]] 
+---+++ Request 185
+See [[SystemVarPHYLOWIDGET185]] 
+---+++ Request 186
+See [[SystemVarPHYLOWIDGET186]] 
+---+++ Request 187
+See [[SystemVarPHYLOWIDGET187]] 
+---+++ Request 188
+See [[SystemVarPHYLOWIDGET188]] 
+---+++ Request 189
+See [[SystemVarPHYLOWIDGET189]] 
+---+++ Request 190
+See [[SystemVarPHYLOWIDGET190]] 
+---+++ Request 191
+See [[SystemVarPHYLOWIDGET191]]
+%META:FIELD{name="count" title="number of requests" value="191"}%
 %META:PREFERENCE{name="PERM_ID_HUMAN" title="PERM_ID_HUMAN" type="Local" value="System_VarPHYLOWIDGET"}%
 %META:PREFERENCE{name="PERM_ID_MD5" title="PERM_ID_MD5" type="Local" value="40f683a9ba2e3ac69c11958c2d8d92f8"}%
 %META:SLPROPERTIES{num="0" value=""}%
-
