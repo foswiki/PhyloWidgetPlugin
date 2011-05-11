@@ -1,12 +1,12 @@
 <html>
 <head>
-<script src='http://peperomia-bp/temi/pub/System/PhyloWidgetPlugin/scripts/phylowidget.js'></script>
+<script src='http://localhost/temi/pub/System/PhyloWidgetPlugin/scripts/phylowidget.js'></script>
 <script>
-PhyloWidget.codebase = 'http://peperomia-bp/temi/pub/System/PhyloWidgetPlugin/lib/';
+PhyloWidget.codebase = 'http://localhost/pub/System/PhyloWidgetPlugin/lib/';
 var params = {
 	width:500,
 	height:700,
-	tree:'http://testwiki.trin.org.au/Sandbox/MangrovesTree?skin=text&raw=on'
+	tree:'http://localhost/Sandbox/MangrovesTree?skin=text&raw=on'
 };
 //tree:'file:///home/var03f/mangroves.txt'
 function doAlert(str){
@@ -22,7 +22,8 @@ function doAlert(str){
 //http://testwiki.trin.org.au/Sandbox/MangrovesTree?skin=text
 PhyloWidget.loadWidget('my_div',params);
 PhyloWidget.loadWidget('div',params);
-//PhyloWidget.changeSetting('tree','http://git.trin.org.au/phylowidget/phylowidget/mangroves.txt');
+//PhyloWidget.changeSetting('
+ree','http://git.trin.org.au/phylowidget/phylowidget/mangroves.txt');
 </script>
 </body>
 
