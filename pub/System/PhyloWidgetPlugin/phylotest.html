@@ -1,8 +1,8 @@
 <html>
 <head>
-<script src='http://git.trin.org.au/phylowidget/phylowidget/scripts/phylowidget.js'></script>
+<script src='http://peperomia-bp/temi/pub/System/PhyloWidgetPlugin/scripts/phylowidget.js'></script>
 <script>
-PhyloWidget.codebase = 'http://git.trin.org.au/phylowidget/phylowidget/lib';
+PhyloWidget.codebase = 'http://peperomia-bp/temi/pub/System/PhyloWidgetPlugin/lib/';
 var params = {
 	width:500,
 	height:700,
@@ -16,12 +16,14 @@ function doAlert(str){
 </head>
 <body>
 <div id="my_div" style="border: 2px solid red;"></div>
+<div id="div" style="boder: 2px solid blue;"></div>
 <script>
 //tree:'http://git.trin.org.au/phylowidget/phylowidget/mangrovenewick'
 //http://testwiki.trin.org.au/Sandbox/MangrovesTree?skin=text
 PhyloWidget.loadWidget('my_div',params);
+PhyloWidget.loadWidget('div',params);
 //PhyloWidget.changeSetting('tree','http://git.trin.org.au/phylowidget/phylowidget/mangroves.txt');
 </script>
-<body>
+</body>
 
 <html>

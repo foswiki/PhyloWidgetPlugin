@@ -67,6 +67,14 @@ use warnings;
 use Carp;
 use Foswiki::Func    ();    # The plugins API
 use Foswiki::Plugins ();    # For the API version
+use Foswiki::Sandbox;
+
+use Error::Simple;
+use Error qw(:try);
+use IO::String;
+
+use Bio::NexmlIO;
+use Bio::TreeIO;
 use Bio::NEXUS;
 
 require LWP::UserAgent;
@@ -174,6 +182,7 @@ sub initPlugin {
     # Allow a sub to be called from the REST interface
     # using the provided alias
     Foswiki::Func::registerRESTHandler( 'getNHX', \&getNHXfromNEX );
+    Foswiki::Func::registerRESTHandler( 'processClade', \&processClade );
 
     # Plugin correctly initialized
     return 1;
@@ -264,17 +273,28 @@ sub getNHXfromNEX{
     my $nexus = Bio::NEXUS->new();
     my $atree ;
     my $content;
-
-    $content = Foswiki::Func::readAttachment($web,$topic,$attachment);
+    eval{
+      $content = Foswiki::Func::readAttachment($web,$topic,$attachment)
+    } or croak return "error reading nexus";
 #      use Data::Dumper;
 # return "<h1>Phylowidget! :)</h1><pre>" . Dumper($requestObject->param()) . '</pre>';
 #     return $url;
     if ($content)
     {
-    $nexus->read({format => 'string','param' => $content}); # or whatever
+     eval{
+#       my $ioform = IO::String->new($content);
+# $nexus = Bio::NEXUS->new('/usr/local/src/temi.foswiki.org/core/pub/BioPerl/TestTrees/S1822A7204.treorg');
+#       my $treeio = Bio::TreeIO->new(-format=>'nexus',-file=>'/usr/local/src/temi.foswiki.org/core/pub/BioPerl/TestTrees/SOSaa.nexorg');
+#  return Dumper($treeio->next_tree);
+#       $nexus->read({format => 'file','param' => $ioform});
+      $nexus->read({format => 'string','param' => $content});
+    } or croak return "error loading nexus into object $_ $@";
+    # or whatever
 #     return @{$nexus->get_block("trees")->get_trees()}[$tree]->as_string();
 #     try{
-    eval { $atree = @{$nexus->get_block("trees")->get_trees()}[$tree]->as_string();} or croak return "ERROR: Index out of range.";
+    eval {
+    $atree = @{$nexus->get_block("trees")->get_trees()}[$tree]->as_string();
+    } or croak return "ERROR: Index out of range.";
 #     carp return "Index out of range." if $@;
     return $atree;
 #     if($@) { return "Index out of range."; }
@@ -290,6 +310,227 @@ sub getNHXfromNEX{
       return "The resource is not available online.";
     }
 }
+sub formatClade {
+  my ($clade) = @_;
+  my $io = IO::String->new($clade);
+  
+  my $treeObj = Bio::TreeIO->new(-fh=>$io,-format=>'newick');
+  my $tree = $treeObj->next_tree;
+  my @list;
+  for my $leaf ($tree->get_leaf_nodes){
+    push(@list,$leaf->id);
+    }
+    return join (',',@list);
+#  use Data::Dumper;
+#  Data::Dumper->Dump($clade);
+#  $clade =~ s/\[//;
+#  $clade =~ s/\]//;
+#   $clade =~ s/[\[\]]//g;
+#   $clade =~ s/\s*,\s*/ , /g;
+#   return $clade;
+}
+sub processClade{
+  my $requestObject;
+  my $web;
+  my $topic;
+  my $clade;
+  my $request;
+  my $updatetopic;
+  my $newtopicname;
+  my $count;
+  my $includeText;
+  my $text;
+  my $c;
+  my $phylo;
+  my $section;
+  my $filename ="Temi";
+  my $makeTree;
+  my ($debug,$dinfo);
+  $debug = 1;
+  $dinfo = '';
+
+  if (defined &Foswiki::Func::getRequestObject) {
+    $requestObject = Foswiki::Func::getRequestObject();
+  } else {
+    $requestObject = Foswiki::Func::getCgiQuery();
+  }
+#   eval{
+# initialization of variables
+  $web = $requestObject->param("theweb");
+  $topic= $requestObject->param("thetopic");
+  $clade= $requestObject->param("clade");
+  $phylo = $requestObject->param("phylo");
+  
+  # convert to integer for easier comparison
+  if($phylo eq 'true'){
+    $makeTree = 1;
+    }
+    else {
+      $makeTree = 0;
+      }
+  # convert nexus to list format
+  if(!$makeTree){
+    $clade = formatClade($clade);
+  }
+#  my($meta,$text) = Foswiki::Func::readTopic("System","VarPHYLOWIDGET");
+
+#   read current topic and get the count variable
+  ($updatetopic,$text) = Foswiki::Func::readTopic($web,$topic);
+  $c = $updatetopic->get('FIELD','count');
+  if(!$c){
+    $count = 0;
+  }
+  else {
+    $count = $c->{value};
+  }
+  #@c = $updatetopic->get('FIELD');
+  #my @arr = keys %c;
+  #@arr = $updatetopic->find('FIELD');
+  #$c = $count;
+  $count=$count+1;
+  $newtopicname = "$web$topic$count";
+  $section = "Request";
+
+# appropriate content for the new topic
+  if($makeTree){
+    $request = "\n---+++ $section\n%PHYLOWIDGET{tree=\"%PUBURL%/%WEB%/%TOPIC%/selection.txt\" useBranchLengths=\"true\"}%";
+#     $request = $clade;
+
+  } else {
+    $request="\n---+++ $section\n%STARTSECTION{\"$section\"}%%INCLUDE{\"%PUBURL%/%WEB%/%TOPIC%/selection.txt\"}%%ENDSECTION{\"$section\"}%";
+  }
+  if($debug){
+    $dinfo = $dinfo. 'created text\n';
+    }
+
+#   creating and saving new topic
+  my($newtopic) = Foswiki::Func::readTopic($web,$newtopicname);
+  $newtopic->text($request);
+  $newtopic->putKeyed('TOPICPARENT',{name=>"$topic"});
+  $newtopic->save();
+  $newtopic->finish();
+  if($debug){
+    $dinfo = $dinfo. 'created clade topic\n';
+    }
+
+  # save attachment in the new topic
+  my $attach = tempFileName();
+  try{
+    my $fh;
+    # create temp file
+    open $fh,'>'.$attach;
+    print $fh $clade;
+    close $fh;
+    
+    my @st = stat $attach;
+    my $size = $st[7];
+    my $date = $st[9];
+#     save as attachment
+    Foswiki::Func::saveAttachment($web,$newtopicname,'selection.txt',
+    {
+      file=>$attach,
+      filesize=>$size,
+      filedate=>$date,
+    });
+    unlink $attach if ($attach && -e $attach);
+    }
+    otherwise{
+    };
+#  $includeText ="%INCLUDE{\"$web.$newtopicname\"}%";
+#  $updatetopic->text($text);
+
+# update current topic
+  $includeText ="\n---+++ $section $count\nSee [[$newtopicname]]";
+  $updatetopic->text("$text $includeText");
+  $updatetopic->putKeyed('FIELD',{name=>'count',title=>'number of requests',value=>"$count"});
+  $updatetopic->save();
+  $updatetopic->finish();
+  if($debug){
+    $dinfo = $dinfo. 'updated parent topic\n';
+    }
+# convert clade into nexml format
+  if($makeTree){
+    if($debug){
+      $dinfo = $dinfo. 'in nexml conversion block\n';
+      }
+    # create file in work area
+    $filename = tempFileName();
+#     $filename = Foswiki::Func::getWorkArea('PhyloWidgetPlugin');
+#     $filename = $filename.'/nexml'.int( rand(1000000000) ).'.xml';
+# read clade from the string
+    my $io = IO::String->new($clade);
+    my $treeio = Bio::TreeIO->new(-fh=>$io,-format=>'nhx');
+# write clade into a file in nexml format
+    my $tree = $treeio->next_tree;
+    my @treeArray = ();
+    push(@treeArray,$tree);
+    my $treeO = Bio::TreeIO->new(-file=>'>'.$filename,format=>'nexml');
+    $treeO->write_tree($tree);
+    $treeO->DESTROY;
+    if($debug){
+      $dinfo = $dinfo. 'wrote the tree into file\n';
+      }
+    
+    #save the file as attachment
+    my @stats = stat $filename;
+    my $fileSize = @stats[7];
+    my $fileDate = @stats[9];
+    if($debug){
+      $dinfo = $dinfo. 'got info of file\n';
+      }
+    try {
+      Foswiki::Func::saveAttachment($web,$newtopicname,"nexml.xml",
+      {
+         file => $filename,
+         filesize => $fileSize,
+         filedate => $fileDate,
+      });
+      if($debug){
+	$dinfo = $dinfo. 'linked nexml to new topic\n';
+	}
+      # delete temp file
+      unlink($filename) if ($filename && -e $filename);
+      if($debug){
+	$dinfo = $dinfo. 'deleted temp topic\n';
+	}
+      } catch Foswiki::AccessControlException with {
+      # Topic CHANGE access denied
+      if($debug){
+	$dinfo = $dinfo. 'in access control exp\n';
+	}
+   } catch Error::Simple with {
+      # see documentation on Error
+      if($debug){
+	$dinfo = $dinfo. 'in simple error\n';
+	}
+   }
+   otherwise {
+     if($debug){
+       $dinfo = $dinfo. 'in otherwise\n';
+       }
+     }
+    }
+
+#  Foswiki::Func::saveTopic("Main","testing", $meta,$text,{ forcenewrevision => 1 });
+# redirect to new topic
+  my $redirect = Foswiki::Func::getScriptUrl($web,$newtopicname,'view');
+  Foswiki::Func::redirectCgiQuery(undef,$redirect);
+# return "$makeTree 1 $dinfo";
+#   } 
+#   or do 
+#   { 
+#       return "PhyloWidgetError";
+# return "$@";
+# return $dinfo;
+#   };
+}
+# create temp file namespace
+sub tempFileName {
+  # create file in work area
+  my $filename = Foswiki::Func::getWorkArea('PhyloWidgetPlugin');
+  return $filename.'/nexml'.int( rand(1000000000) );
+}
+
 # The function used to handle the %EXAMPLETAG{...}% macro
 # You would have one of these for each macro you want to process.
 sub _EXAMPLETAG {
@@ -328,6 +569,9 @@ sub _EXAMPLETAG {
     my $webName = $Foswiki::SESSION->{webName};
     $url = $params->{'_DEFAULT'};
     ($theweb,$thetopic) = Foswiki::Func::normalizeWebTopicName( $webName, $url);
+#    if($params->{tree}){
+#      push @tree, "tree:'$params->{tree}'";
+#    }els
     if($params->{'_DEFAULT'} && $params->{'attachment'}){
 #       my $theurl = Foswiki::Func::getViewUrl( $theweb,$thetopic);
       my $host = Foswiki::Func::getUrlHost();
@@ -363,18 +607,88 @@ sub _EXAMPLETAG {
     Foswiki::Func::addToZone(
       "script",
       "PhyloWidgetPlugin/Javascript",
-      "<script src='$pubUrlPath/$Foswiki::cfg{SystemWebName}/PhyloWidgetPlugin/scripts/phylowidget.js'></script>"
+     # "<link rel='stylesheet' href='$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/themes/base/jquery.ui.resizable.css'>"
+      "<style>
+	#phylowidgetobject { padding: 0.5em; }
+        #phylowidgetobject h3 { text-align: center; margin: 0; }
+	.ui-resizable-helper { border: 2px dotted #00F; }
+	</style>"
+      #."<link rel='stylesheet' href='$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/themes/base/jquery-ui.css'>"
+      #."<link rel='stylesheet' href='$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/themes/base/jquery.ui.core.css'>"
+      ."<script src='$pubUrlPath/$Foswiki::cfg{SystemWebName}/PhyloWidgetPlugin/scripts/phylowidget.js'></script>"
       ."<script>PhyloWidget.codebase = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/PhyloWidgetPlugin/lib';</script>"
+      #."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/jquery-1.4.2.js'></script>"
+      #."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/ui/jquery.ui.core.js'></script>"
+      #."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/ui/jquery.ui.widget.js'></script>"
+      #."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/ui/jquery.ui.mouse.js'></script>"
+      #."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/ui/jquery.ui.resizable.js'></script>"
+      #."<script>
+#  \$('document').ready(function(){
+ #   \$('#phylowidgetobject').resizable({
+  #    helper:'ui-resizable-helper',
+   #   stop:function(event,ui){
+    #    var phylo = \$('#phylowidgetobject');
+     #   PhyloWidget.changeSetting('height',phylo.height()-2+'');
+      #  PhyloWidget.changeSetting('width',phylo.width()-2+'');
+       # document.pulpcore_object.width = phylo.width()-2;
+       # document.pulpcore_object.height = phylo.height()-2;
+     # }
+    #});
+ # });
+  #</script>"
     );
+#     my $restUrlPath = Foswiki::Func::getScriptUrl(undef,undef,'rest');
+#     Foswiki::Func::addToZone(
+#     "script",
+#     "phyloOverlayCode",
+#     "<script src='$pubUrlPath/$Foswiki::cfg{SystemWebName}/PhyloWidgetPlugin/scripts/phylowidget.js'></script>"
+#     ."<script>PhyloWidget.codebase = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/PhyloWidgetPlugin/lib';</script>"
+#     ."<script>
+#     \$(document).ready(function(){
+#       \$('<div id=\"overlay\"/>').css({
+# 	position: 'fixed',
+# 	top: 0,
+# 	left: 0,
+# 	width: '100%',
+# 	height: \$(window).height() + 'px',
+# 	background: 'white url($hostUrL$pubUrlPath/System/PhyloWidgetPlugin/loading.gif) no-repeat center'
+# 	}).hide().appendTo('body');
+# 	var p = \$('#phylo');
+# 	\$('#overlay').hide();
+# 	});
+# 	function processClade(clade,phylo){
+# 	\$('#overlay').show();
+# 	//alert(clade);
+# 	\$.get('$restUrlPath/PhyloWidgetPlugin/processClade',{'clade':clade,'theweb':foswiki.web,'thetopic':foswiki.topic,'phylo':phylo},function(data){
+# 	//alert('processing is now complete:'+data)
+# 	\$('#overlay').hide();
+# 	window.location = data;
+# 	});
+# 	}
+# 	</script>",
+# 	'JQUERYPLUGIN'
+# 	);
+	
 # <script src='/pub/System/PhyloWidgetPlugin/scripts/phylowidget.js'></script>
 #     <script src='http://git.trin.org.au/phylowidget/phylowidget/scripts/phylowidget.js'></script>
 # <a href='$pubUrlPath/$Foswiki::cfg{SystemWebName}/PhyloWidgetPlugin/scripts/phylowidget.js'>here</a>
 #   my $str = join(',',@str);
 #   my $theurl = Foswiki::Func::getViewUrl($webname,$url);
-my $height = $params->{'height'}+6;
-my $width = $params->{'width'}+6;
+
+# add the function that will interface with processClade rest handler
+  my $mobbs = '%INCLUDE{"System.VarPHYLOWIDGET" section="jscode"}%';
+  $mobbs = Foswiki::Func::expandCommonVariables($mobbs);
+  Foswiki::Func::addToZone('script','jscode','<script>'.$mobbs.'</script>','JQUERY');
+
+# add a form to the returned text
+  my $form = '%INCLUDE{"System.VarPHYLOWIDGET" section="cladeform"}%';
+#   $form = Foswiki::Func::addToZone('','','');
+
+  my $height = $params->{'height'}+6;
+  my $width = $params->{'width'}+6;
   my $param = join ',', @tree;
-  return "<div style='width: $width; height: $height; border: 2px solid black; padding: 3px;'><script>PhyloWidget.writeWidget({$param});</script></div>";
+  return "<div id = 'phylowidgetobject' style='width: $width; height: $height; border: 2px solid; padding: 3px;display:inline-table'><script>PhyloWidget.writeWidget({$param});</script> $form</div>";
+# style='width: $width; height: $height; border: 2px solid; padding: 3px;display:inline-table'
 #   return "<div style='border-width:1px;border-style:solid;padding:2px;'>WEB: $theweb url: $thetopic created url: $createdurl<!--<script>PhyloWidget.writeWidget({$str});</script>--></div>";
 
 #      return "<h1>Phylowidget! :)</h1><pre>" . Dumper($params) . '</pre>';

@@ -20,10 +20,16 @@
     height="495"
     width="420"}%</verbatim>
     * Result (if installed):
+	<div id="phylo">
 	%PHYLOWIDGET{"%SYSTEMWEB%.PhyloWidgetExample"
 	height="495"
 	width="420"
 	useBranchLengths="true"
 	}%
+	</div>
    See also: [[PhyloWidgetPlugin]], [[VarNEXUSTREES][NEXUSTREES]]
-<!--%JQREQUIRE{"chili"}%-->
+%META:FIELD{name="count" title="number of requests" value="73"}%
+%META:PREFERENCE{name="PERM_ID_HUMAN" title="PERM_ID_HUMAN" type="Local" value="System_VarPHYLOWIDGET"}%
+%META:PREFERENCE{name="PERM_ID_MD5" title="PERM_ID_MD5" type="Local" value="40f683a9ba2e3ac69c11958c2d8d92f8"}%
+%META:SLPROPERTIES{num="0" value=""}%
+

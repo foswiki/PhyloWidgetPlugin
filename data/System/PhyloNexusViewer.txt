@@ -4,14 +4,15 @@
    * Set ATOPIC=%URLPARAM{"qTopic" default="%topic%"}%
    * Set AATTACH=%URLPARAM{"qAttachment" default="%attachment%"}%
 -->
-<div id="phylowidget" style="float:left;">
+<span style="clear:both;">
+<div id="phylowidget" style="float:left;margin-right:5px;">
 %PHYLOWIDGET{width="420" height="495" useBranchLengths="true"}%
 </div>
 
-<div id="treeList" style="float: right; width: 425px; height: 500px; border: 2px solid black; padding: 3px; overflow: scroll;">
+<div id="treeList" style="width: 420px; height: 495px; border: 2px solid black; padding: 3px; overflow: auto;">
 %NEXUSTREES{"%URLPARAM{"qWeb" default="%web%"}%/%URLPARAM{"qTopic" default="%topic%"}%" attachment="%URLPARAM{"qAttachment" default="%attachment%"}%" header="<h3>Tree List</h3>$n" format = "   * <a href=\"javascript:PhyloWidget.changeSetting('tree','%SCRIPTURL{"rest"}%/PhyloWidgetPlugin/getNHX?web=%URLPARAM{"qWeb" default="%web%"}%;topic=%URLPARAM{"qWeb" default="%web%"}%.%URLPARAM{"qTopic" default="%topic%"}%;attachment=%URLPARAM{"qAttachment" default="%attachment%"}%;tree=$treeid');\" onclick=\"select(this)\">$treeName</a>" separator="$n"}%
 </div>
-
+</span>
 %ADDTOZONE{
 "script"
 text="<script type='text/javascript'>
