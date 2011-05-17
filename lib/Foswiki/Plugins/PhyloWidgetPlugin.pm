@@ -473,8 +473,8 @@ sub processClade{
     
     #save the file as attachment
     my @stats = stat $filename;
-    my $fileSize = @stats[7];
-    my $fileDate = @stats[9];
+    my $fileSize = $stats[7];
+    my $fileDate = $stats[9];
     if($debug){
       $dinfo = $dinfo. 'got info of file\n';
       }
