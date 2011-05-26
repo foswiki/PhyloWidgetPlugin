@@ -397,7 +397,7 @@ sub processClade{
 #     $request = $clade;
 
   } else {
-    $request="\n---+++ $section\n%STARTSECTION{\"$section\"}%%INCLUDE{\"%PUBURL%/%WEB%/%TOPIC%/selection.txt\"}%%ENDSECTION{\"$section\"}%";
+    $request="\n---+++ $section\n%STARTSECTION{\"$section\"}%%INCLUDE{\"%BASEWEB%.CharacterGridView\"}%%INCLUDE{\"%PUBURL%/%WEB%/%TOPIC%/selection.txt\"}%%ENDSECTION{\"$section\"}%";
   }
   if($debug){
     $dinfo = $dinfo. 'created text\n';
@@ -415,7 +415,7 @@ sub processClade{
 
   # save attachment in the new topic
   my $attach = tempFileName();
-  try{
+ #try{
     my $fh;
     # create temp file
     open $fh,'>'.$attach;
@@ -433,9 +433,9 @@ sub processClade{
       filedate=>$date,
     });
     unlink $attach if ($attach && -e $attach);
-    }
-    otherwise{
-    };
+  #  }
+  #  otherwise{
+  #  };
 #  $includeText ="%INCLUDE{\"$web.$newtopicname\"}%";
 #  $updatetopic->text($text);
 
@@ -473,12 +473,12 @@ sub processClade{
     
     #save the file as attachment
     my @stats = stat $filename;
-    my $fileSize = $stats[7];
-    my $fileDate = $stats[9];
+    my $fileSize = @stats[7];
+    my $fileDate = @stats[9];
     if($debug){
       $dinfo = $dinfo. 'got info of file\n';
       }
-    try {
+#    try {
       Foswiki::Func::saveAttachment($web,$newtopicname,"nexml.xml",
       {
          file => $filename,
@@ -493,22 +493,22 @@ sub processClade{
       if($debug){
 	$dinfo = $dinfo. 'deleted temp topic\n';
 	}
-      } catch Foswiki::AccessControlException with {
+ #     } catch Foswiki::AccessControlException with {
       # Topic CHANGE access denied
-      if($debug){
-	$dinfo = $dinfo. 'in access control exp\n';
-	}
-   } catch Error::Simple with {
-      # see documentation on Error
-      if($debug){
-	$dinfo = $dinfo. 'in simple error\n';
-	}
-   }
-   otherwise {
-     if($debug){
-       $dinfo = $dinfo. 'in otherwise\n';
-       }
-     }
+ #     if($debug){
+#	$dinfo = $dinfo. 'in access control exp\n';
+#	}
+#   } catch Error::Simple with {
+ #     # see documentation on Error
+  #    if($debug){
+#	$dinfo = $dinfo. 'in simple error\n';
+#	}
+ #  }
+  # otherwise {
+   #  if($debug){
+    #   $dinfo = $dinfo. 'in otherwise\n';
+     #  }
+    # }
     }
 
 #  Foswiki::Func::saveTopic("Main","testing", $meta,$text,{ forcenewrevision => 1 });
