@@ -76,6 +76,7 @@ use IO::String;
 use Bio::NexmlIO;
 use Bio::TreeIO;
 use Bio::NEXUS;
+use Bio::Tree::Draw::Cladogram;
 
 require LWP::UserAgent;
 
@@ -99,7 +100,8 @@ our $RELEASE = '0.1.2';
 
 # Short description of this plugin
 # One line description, is shown in the %SYSTEMWEB%.TextFormattingRules topic:
-our $SHORTDESCRIPTION = 'A Foswiki integration of the PhyloWidget phylogeny browser';
+our $SHORTDESCRIPTION =
+  'A Foswiki integration of the PhyloWidget phylogeny browser';
 
 # You must set $NO_PREFS_IN_TOPIC to 0 if you want your plugin to use
 # preferences set in the plugin topic. This is required for compatibility
@@ -157,7 +159,7 @@ sub initPlugin {
         return 0;
     }
     $pubUrlPath = Foswiki::Func::getPubUrlPath();
-    $hostUrL = Foswiki::Func::getUrlHost();
+    $hostUrL    = Foswiki::Func::getUrlHost();
 
     # Example code of how to get a preference value, register a macro
     # handler and register a RESTHandler (remove code you do not need)
@@ -168,376 +170,505 @@ sub initPlugin {
     # See %SYSTEMWEB%.DevelopingPlugins#ConfigSpec for information
     # on integrating your plugin configuration with =configure=.
 
-    # Always provide a default in case the setting is not defined in
-    # LocalSite.cfg.
-    # my $setting = $Foswiki::cfg{Plugins}{PhyloWidgetPlugin}{ExampleSetting} || 0;
+ # Always provide a default in case the setting is not defined in
+ # LocalSite.cfg.
+ # my $setting = $Foswiki::cfg{Plugins}{PhyloWidgetPlugin}{ExampleSetting} || 0;
 
     # Register the _EXAMPLETAG function to handle %EXAMPLETAG{...}%
     # This will be called whenever %EXAMPLETAG% or %EXAMPLETAG{...}% is
     # seen in the topic text.
     Foswiki::Func::registerTagHandler( 'PHYLOWIDGET', \&_EXAMPLETAG );
-    Foswiki::Func::registerTagHandler( 'NEXUSTREES', \&LISTNEXUSTREES );
-    $baseWeb = $web;
+    Foswiki::Func::registerTagHandler( 'NEXUSTREES',  \&LISTNEXUSTREES );
+    Foswiki::Func::registerTagHandler( 'TREEPNG', \&TREEPNG );
+    $baseWeb   = $web;
     $baseTopic = $topic;
+
     # Allow a sub to be called from the REST interface
     # using the provided alias
-    Foswiki::Func::registerRESTHandler( 'getNHX', \&getNHXfromNEX );
+    Foswiki::Func::registerRESTHandler( 'getNHX',       \&getNHXfromNEX );
     Foswiki::Func::registerRESTHandler( 'processClade', \&processClade );
+    Foswiki::Func::registerRESTHandler( 'getPNG',       \&getPNG );
 
     # Plugin correctly initialized
     return 1;
 }
-sub LISTNEXUSTREES{
-    my($session, $params, $Atopic, $Aweb, $topicObject) = @_;
+
+sub LISTNEXUSTREES {
+    my ( $session, $params, $Atopic, $Aweb, $topicObject ) = @_;
     my @format = ();
-    my $url = getAttachUrl('',$params->{'_DEFAULT'},$params->{'attachment'});
+    my $url =
+      getAttachUrl( '', $params->{'_DEFAULT'}, $params->{'attachment'} );
     my $web;
     my $topic;
     my $attachment = $params->{'attachment'};
     my $content;
-    
-    ($web,$topic) = Foswiki::Func::normalizeWebTopicName('',$params->{'_DEFAULT'});
-    $content = Foswiki::Func::readAttachment($web,$topic,$attachment);
+
+    ( $web, $topic ) =
+      Foswiki::Func::normalizeWebTopicName( '', $params->{'_DEFAULT'} );
+    $content = Foswiki::Func::readAttachment( $web, $topic, $attachment );
+
 #     my $url  = Foswiki::Func::getUrlHost()."$pubUrlPath/$topic/$attachment";
 #     my $url  = Foswiki::Func::getUrlHost()."$pubUrlPath//$web/$topic/$attachment";
 #     my $ua = LWP::UserAgent->new();
 #     my $response = $ua->get("$url");
     my $nexus = Bio::NEXUS->new();
-#     my $separator =  $params->{separator};
-    
+
+    #     my $separator =  $params->{separator};
+
 #      use Data::Dumper;
 # return "<h1>Phylowidget! :)</h1><pre>" . Dumper($requestObject->param()) . '</pre>';
 #     return $url;
 #    my $str='';
-    if ($content)
-    {
-    $nexus->read({format => 'string','param' => $content}); # or whatever\
-    my @trees = @{$nexus->get_block("trees")->get_trees()};
-    my $treeNumber = $#trees;
-#     $str = "$treeNumber  :: ";
-    foreach my $treeid ((0 .. $treeNumber)){
-	my $tree = $trees[$treeid];
-	my $treeName = $tree->get_name();
-	$treeName =~ s/_/ /gx;
-	my $format = $params->{format};
-	$format =~ s/\$treeid\b/$treeid/gx;
-	$format =~ s/\$treeName\b/$treeName/gx;
-	push @format,$format if $format;
-      }
-#       $str = join @format , $separator;
-      return Foswiki::expandStandardEscapes( $params->{header}
-      . join( $params->{separator}, @format )
-      . $params->{footer} );
+    if ($content) {
+        $nexus->read( { format => 'string', 'param' => $content } )
+          ;    # or whatever\
+        my @trees      = @{ $nexus->get_block("trees")->get_trees() };
+        my $treeNumber = $#trees;
+
+        #     $str = "$treeNumber  :: ";
+        foreach my $treeid ( ( 0 .. $treeNumber ) ) {
+            my $tree     = $trees[$treeid];
+            my $treeName = $tree->get_name();
+            $treeName =~ s/_/ /gx;
+            my $format = $params->{format};
+            $format =~ s/\$treeid\b/$treeid/gx;
+            $format =~ s/\$treeName\b/$treeName/gx;
+            push @format, $format if $format;
+        }
+
+        #       $str = join @format , $separator;
+        return Foswiki::expandStandardEscapes( $params->{header}
+              . join( $params->{separator}, @format )
+              . $params->{footer} );
     }
-    else
-    {
-      return "The resource is not available online.";
+    else {
+        return "The resource is not available online.";
     }
-#      use Data::Dumper;
-# return Dumper($params);
-# return $url;
-# return $str;
+
+    #      use Data::Dumper;
+    # return Dumper($params);
+    # return $url;
+    # return $str;
 }
-sub getAttachUrl{
-#   my ($args) = @_;
-  my ($web,$topic,$attachment) = @_;
-#   $web =  $args->{'web'}?$args->{'web'}:'';
-#   my $topic = $args->{'topic'};
-#   my $t = $args->{'t'};
-#      use Data::Dumper;
-# return "<h1>Phylowidget! :)</h1><pre>$web / $topic</pre>";
-# return "$web/$topic";
-  ($web,$topic) = Foswiki::Func::normalizeWebTopicName( $web, $topic);
+
+sub getAttachUrl {
+
+    #   my ($args) = @_;
+    my ( $web, $topic, $attachment ) = @_;
+
+    #   $web =  $args->{'web'}?$args->{'web'}:'';
+    #   my $topic = $args->{'topic'};
+    #   my $t = $args->{'t'};
+    #      use Data::Dumper;
+    # return "<h1>Phylowidget! :)</h1><pre>$web / $topic</pre>";
+    # return "$web/$topic";
+    ( $web, $topic ) = Foswiki::Func::normalizeWebTopicName( $web, $topic );
+
 # $args->{'web'},$args->{'topic'},'pub')."/$args->{'attachment'}"
 # ($web,$topic) = Foswiki::Func::normalizeWebTopicName( $args->{'web'}, $args->{'topic'});
-  return Foswiki::Func::getUrlHost()."$pubUrlPath/$web/$topic/$attachment";
+    return Foswiki::Func::getUrlHost() . "$pubUrlPath/$web/$topic/$attachment";
 }
-sub getNHXfromNEX{
-    my ( $session, $subject, $verb, $responses) = @_;
+
+sub getNHXfromNEX {
+    my ( $session, $subject, $verb, $responses ) = @_;
     my $requestObject;
-	if (defined &Foswiki::Func::getRequestObject) {
-		$requestObject = Foswiki::Func::getRequestObject();
-	} else {
-		$requestObject = Foswiki::Func::getCgiQuery();
-	}
-    my $web = $requestObject->param('web');
+    if ( defined &Foswiki::Func::getRequestObject ) {
+        $requestObject = Foswiki::Func::getRequestObject();
+    }
+    else {
+        $requestObject = Foswiki::Func::getCgiQuery();
+    }
+    my $web   = $requestObject->param('web');
     my $topic = $requestObject->param('topic');
-#     my $topic = $requestObject->param('topic');
+
+    #     my $topic = $requestObject->param('topic');
     my $attachment = $requestObject->param('attachment');
-    my $tree = $requestObject->param('tree');
-    my $url = getAttachUrl($web,$topic,$attachment);
+    my $tree       = $requestObject->param('tree');
+    my $url        = getAttachUrl( $web, $topic, $attachment );
+
 #     my $url  = Foswiki::Func::getUrlHost()."$pubUrlPath/$topic/$attachment";
 #     my $url  = Foswiki::Func::getUrlHost()."$pubUrlPath//$web/$topic/$attachment";
 #     my $ua = LWP::UserAgent->new();
 #     my $response = $ua->get("$url");
     my $nexus = Bio::NEXUS->new();
-    my $atree ;
+    my $atree;
     my $content;
+
     #eval{
-      $content = Foswiki::Func::readAttachment($web,$topic,$attachment);
-    #} or croak return "error reading nexus";
+    $content = Foswiki::Func::readAttachment( $web, $topic, $attachment );
+
+#} or croak return "error reading nexus";
 #      use Data::Dumper;
 # return "<h1>Phylowidget! :)</h1><pre>" . Dumper($requestObject->param()) . '</pre>';
 #     return $url;
-    if ($content)
-    {
-     eval{
+    if ($content) {
+        eval {
+
 #       my $ioform = IO::String->new($content);
 # $nexus = Bio::NEXUS->new('/usr/local/src/temi.foswiki.org/core/pub/BioPerl/TestTrees/S1822A7204.treorg');
 #       my $treeio = Bio::TreeIO->new(-format=>'nexus',-file=>'/usr/local/src/temi.foswiki.org/core/pub/BioPerl/TestTrees/SOSaa.nexorg');
 #  return Dumper($treeio->next_tree);
 #       $nexus->read({format => 'file','param' => $ioform});
-      $nexus->read({format => 'string','param' => $content});
-    } or croak return "error loading nexus into object $_ $@";
-    # or whatever
-#     return @{$nexus->get_block("trees")->get_trees()}[$tree]->as_string();
-#     try{
-    eval {
-    $atree = @{$nexus->get_block("trees")->get_trees()}[$tree]->as_string();
-    } or croak return "ERROR: Index out of range.";
-#     carp return "Index out of range." if $@;
-    return $atree;
-#     if($@) { return "Index out of range."; }
-#     else { return $atree;}
-#     } catch{
-#       return "Index out of range.";
-#     }
-# 	print $tree->as_string()."\n";
-#     }
-    }
-    else
-    {
-      return "The resource is not available online.";
-    }
-}
-sub formatClade {
-  my ($clade) = @_;
-  my $io = IO::String->new($clade);
-  
-  my $treeObj = Bio::TreeIO->new(-fh=>$io,-format=>'newick');
-  my $tree = $treeObj->next_tree;
-  my @list;
-  for my $leaf ($tree->get_leaf_nodes){
-    push(@list,$leaf->id);
-    }
-    return join (',',@list);
-#  use Data::Dumper;
-#  Data::Dumper->Dump($clade);
-#  $clade =~ s/\[//;
-#  $clade =~ s/\]//;
-#   $clade =~ s/[\[\]]//g;
-#   $clade =~ s/\s*,\s*/ , /g;
-#   return $clade;
-}
-sub processClade{
-  my $requestObject;
-  my $web;
-  my $topic;
-  my $clade;
-  my $request;
-  my $updatetopic;
-  my $newtopicname;
-  my $count;
-  my $includeText;
-  my $text;
-  my $c;
-  my $phylo;
-  my $section;
-  my $filename ="Temi";
-  my $makeTree;
-  my ($debug,$dinfo);
-  $debug = 1;
-  $dinfo = '';
+            $nexus->read( { format => 'string', 'param' => $content } );
+        } or croak return "error loading nexus into object $_ $@";
 
-  if (defined &Foswiki::Func::getRequestObject) {
-    $requestObject = Foswiki::Func::getRequestObject();
-  } else {
-    $requestObject = Foswiki::Func::getCgiQuery();
-  }
-#   eval{
-# initialization of variables
-  $web = $requestObject->param("theweb");
-  $topic= $requestObject->param("thetopic");
-  $clade= $requestObject->param("clade");
-  $phylo = $requestObject->param("phylo");
-  
-  # convert to integer for easier comparison
-  if($phylo eq 'true'){
-    $makeTree = 1;
+    # or whatever
+    #     return @{$nexus->get_block("trees")->get_trees()}[$tree]->as_string();
+    #     try{
+        eval {
+            $atree =
+              @{ $nexus->get_block("trees")->get_trees() }[$tree]->as_string();
+        } or croak return "ERROR: Index out of range.";
+
+        #     carp return "Index out of range." if $@;
+        return $atree;
+
+        #     if($@) { return "Index out of range."; }
+        #     else { return $atree;}
+        #     } catch{
+        #       return "Index out of range.";
+        #     }
+        # 	print $tree->as_string()."\n";
+        #     }
     }
     else {
-      $makeTree = 0;
-      }
-  # convert nexus to list format
-  if(!$makeTree){
-    $clade = formatClade($clade);
-  }
-#  my($meta,$text) = Foswiki::Func::readTopic("System","VarPHYLOWIDGET");
+        return "The resource is not available online.";
+    }
+}
 
-#   read current topic and get the count variable
-  ($updatetopic,$text) = Foswiki::Func::readTopic($web,$topic);
-  $c = $updatetopic->get('FIELD','count');
-  if(!$c){
-    $count = 0;
-  }
-  else {
-    $count = $c->{value};
-  }
-  #@c = $updatetopic->get('FIELD');
-  #my @arr = keys %c;
-  #@arr = $updatetopic->find('FIELD');
-  #$c = $count;
-  $count=$count+1;
-  $newtopicname = "$web$topic$count";
-  $section = "Request";
+sub formatClade {
+    my ($clade) = @_;
+    my $io = IO::String->new($clade);
 
-# appropriate content for the new topic
-  if($makeTree){
-    $request = "\n---+++ $section\n%PHYLOWIDGET{tree=\"%PUBURL%/%WEB%/%TOPIC%/selection.txt\" useBranchLengths=\"true\"}%";
-#     $request = $clade;
+    my $treeObj = Bio::TreeIO->new( -fh => $io, -format => 'newick' );
+    my $tree = $treeObj->next_tree;
+    my @list;
+    for my $leaf ( $tree->get_leaf_nodes ) {
+        push( @list, $leaf->id );
+    }
+    return join( ',', @list );
 
-  } else {
-    $request="\n---+++ $section\n%STARTSECTION{\"$section\"}%%INCLUDE{\"%BASEWEB%.CharacterGridView\"}%%INCLUDE{\"%PUBURL%/%WEB%/%TOPIC%/selection.txt\"}%%ENDSECTION{\"$section\"}%";
-  }
-  if($debug){
-    $dinfo = $dinfo. 'created text\n';
+    #  use Data::Dumper;
+    #  Data::Dumper->Dump($clade);
+    #  $clade =~ s/\[//;
+    #  $clade =~ s/\]//;
+    #   $clade =~ s/[\[\]]//g;
+    #   $clade =~ s/\s*,\s*/ , /g;
+    #   return $clade;
+}
+
+sub processClade {
+    my $requestObject;
+    my $web;
+    my $topic;
+    my $clade;
+    my $request;
+    my $updatetopic;
+    my $newtopicname;
+    my $count;
+    my $includeText;
+    my $text;
+    my $c;
+    my $phylo;
+    my $section;
+    my $filename = "Temi";
+    my $makeTree;
+    my ( $debug, $dinfo );
+    $debug = 1;
+    $dinfo = '';
+
+    if ( defined &Foswiki::Func::getRequestObject ) {
+        $requestObject = Foswiki::Func::getRequestObject();
+    }
+    else {
+        $requestObject = Foswiki::Func::getCgiQuery();
     }
 
-#   creating and saving new topic
-  my($newtopic) = Foswiki::Func::readTopic($web,$newtopicname);
-  $newtopic->text($request);
-  $newtopic->putKeyed('TOPICPARENT',{name=>"$topic"});
-  $newtopic->save();
-  $newtopic->finish();
-  if($debug){
-    $dinfo = $dinfo. 'created clade topic\n';
+    #   eval{
+    # initialization of variables
+    $web   = $requestObject->param("theweb");
+    $topic = $requestObject->param("thetopic");
+    $clade = $requestObject->param("clade");
+    $phylo = $requestObject->param("phylo");
+
+    # convert to integer for easier comparison
+    if ( $phylo eq 'true' ) {
+        $makeTree = 1;
+    }
+    else {
+        $makeTree = 0;
     }
 
-  # save attachment in the new topic
-  my $attach = tempFileName();
- #try{
+    # convert nexus to list format
+    if ( !$makeTree ) {
+        $clade = formatClade($clade);
+    }
+
+    #  my($meta,$text) = Foswiki::Func::readTopic("System","VarPHYLOWIDGET");
+
+    #   read current topic and get the count variable
+    ( $updatetopic, $text ) = Foswiki::Func::readTopic( $web, $topic );
+    $c = $updatetopic->get( 'FIELD', 'count' );
+    if ( !$c ) {
+        $count = 0;
+    }
+    else {
+        $count = $c->{value};
+    }
+
+    #@c = $updatetopic->get('FIELD');
+    #my @arr = keys %c;
+    #@arr = $updatetopic->find('FIELD');
+    #$c = $count;
+    $count        = $count + 1;
+    $newtopicname = "$web$topic$count";
+    $section      = "Request";
+
+    # appropriate content for the new topic
+    if ($makeTree) {
+        $request =
+"\n---+++ $section\n%PHYLOWIDGET{tree=\"%PUBURL%/%WEB%/%TOPIC%/selection.txt\" useBranchLengths=\"true\"}%";
+
+        #     $request = $clade;
+
+    }
+    else {
+        $request =
+"\n---+++ $section\n%STARTSECTION{\"$section\"}%%INCLUDE{\"System.CharacterGridView\"}%%INCLUDE{\"%PUBURL%/%WEB%/%TOPIC%/selection.txt\"}%%ENDSECTION{\"$section\"}%";
+    }
+    if ($debug) {
+        $dinfo = $dinfo . 'created text\n';
+    }
+
+    #   creating and saving new topic
+    my ($newtopic) = Foswiki::Func::readTopic( $web, $newtopicname );
+    $newtopic->text($request);
+    $newtopic->putKeyed( 'TOPICPARENT', { name => "$topic" } );
+    $newtopic->save();
+    $newtopic->finish();
+    if ($debug) {
+        $dinfo = $dinfo . 'created clade topic\n';
+    }
+
+    # save attachment in the new topic
+    my $attach = tempFileName();
+
+    #try{
     my $fh;
+
     # create temp file
-    open $fh,'>'.$attach;
+    open $fh, '>' . $attach;
     print $fh $clade;
     close $fh;
-    
-    my @st = stat $attach;
+
+    my @st   = stat $attach;
     my $size = $st[7];
     my $date = $st[9];
-#     save as attachment
-    Foswiki::Func::saveAttachment($web,$newtopicname,'selection.txt',
-    {
-      file=>$attach,
-      filesize=>$size,
-      filedate=>$date,
-    });
-    unlink $attach if ($attach && -e $attach);
-  #  }
-  #  otherwise{
-  #  };
-#  $includeText ="%INCLUDE{\"$web.$newtopicname\"}%";
-#  $updatetopic->text($text);
 
-# update current topic
-  $includeText ="\n---+++ $section $count\nSee [[$newtopicname]]";
-  $updatetopic->text("$text $includeText");
-  $updatetopic->putKeyed('FIELD',{name=>'count',title=>'number of requests',value=>"$count"});
-  $updatetopic->save();
-  $updatetopic->finish();
-  if($debug){
-    $dinfo = $dinfo. 'updated parent topic\n';
+    #     save as attachment
+    Foswiki::Func::saveAttachment(
+        $web,
+        $newtopicname,
+        'selection.txt',
+        {
+            file     => $attach,
+            filesize => $size,
+            filedate => $date,
+        }
+    );
+    unlink $attach if ( $attach && -e $attach );
+
+    #  }
+    #  otherwise{
+    #  };
+    #  $includeText ="%INCLUDE{\"$web.$newtopicname\"}%";
+    #  $updatetopic->text($text);
+
+    # update current topic
+    $includeText = "\n---+++ $section $count\nSee [[$newtopicname]]";
+    $updatetopic->text("$text $includeText");
+    $updatetopic->putKeyed( 'FIELD',
+        { name => 'count', title => 'number of requests', value => "$count" } );
+    $updatetopic->save();
+    $updatetopic->finish();
+    if ($debug) {
+        $dinfo = $dinfo . 'updated parent topic\n';
     }
-# convert clade into nexml format
-  if($makeTree){
-    if($debug){
-      $dinfo = $dinfo. 'in nexml conversion block\n';
-      }
-    # create file in work area
-    $filename = tempFileName();
-#     $filename = Foswiki::Func::getWorkArea('PhyloWidgetPlugin');
-#     $filename = $filename.'/nexml'.int( rand(1000000000) ).'.xml';
-# read clade from the string
-    my $io = IO::String->new($clade);
-    my $treeio = Bio::TreeIO->new(-fh=>$io,-format=>'nhx');
-# write clade into a file in nexml format
-    my $tree = $treeio->next_tree;
-    my @treeArray = ();
-    push(@treeArray,$tree);
-    my $treeO = Bio::TreeIO->new(-file=>'>'.$filename,format=>'nexml');
-    $treeO->write_tree($tree);
-    $treeO->DESTROY;
-    if($debug){
-      $dinfo = $dinfo. 'wrote the tree into file\n';
-      }
-    
-    #save the file as attachment
-    my @stats = stat $filename;
-    my $fileSize = @stats[7];
-    my $fileDate = @stats[9];
-    if($debug){
-      $dinfo = $dinfo. 'got info of file\n';
-      }
-#    try {
-      Foswiki::Func::saveAttachment($web,$newtopicname,"nexml.xml",
-      {
-         file => $filename,
-         filesize => $fileSize,
-         filedate => $fileDate,
-      });
-      if($debug){
-	$dinfo = $dinfo. 'linked nexml to new topic\n';
-	}
-      # delete temp file
-      unlink($filename) if ($filename && -e $filename);
-      if($debug){
-	$dinfo = $dinfo. 'deleted temp topic\n';
-	}
- #     } catch Foswiki::AccessControlException with {
-      # Topic CHANGE access denied
- #     if($debug){
-#	$dinfo = $dinfo. 'in access control exp\n';
-#	}
-#   } catch Error::Simple with {
- #     # see documentation on Error
-  #    if($debug){
-#	$dinfo = $dinfo. 'in simple error\n';
-#	}
- #  }
-  # otherwise {
-   #  if($debug){
-    #   $dinfo = $dinfo. 'in otherwise\n';
-     #  }
-    # }
+
+    # convert clade into nexml format
+    if ($makeTree) {
+        if ($debug) {
+            $dinfo = $dinfo . 'in nexml conversion block\n';
+        }
+
+        # create file in work area
+        $filename = tempFileName();
+
+        #     $filename = Foswiki::Func::getWorkArea('PhyloWidgetPlugin');
+        #     $filename = $filename.'/nexml'.int( rand(1000000000) ).'.xml';
+        # read clade from the string
+        my $io = IO::String->new($clade);
+        my $treeio = Bio::TreeIO->new( -fh => $io, -format => 'nhx' );
+
+        # write clade into a file in nexml format
+        my $tree      = $treeio->next_tree;
+        my @treeArray = ();
+        push( @treeArray, $tree );
+        my $treeO =
+          Bio::TreeIO->new( -file => '>' . $filename, format => 'nexml' );
+        $treeO->write_tree($tree);
+        $treeO->DESTROY;
+        if ($debug) {
+            $dinfo = $dinfo . 'wrote the tree into file\n';
+        }
+
+        #save the file as attachment
+        my @stats    = stat $filename;
+        my $fileSize = @stats[7];
+        my $fileDate = @stats[9];
+        if ($debug) {
+            $dinfo = $dinfo . 'got info of file\n';
+        }
+
+        #    try {
+        Foswiki::Func::saveAttachment(
+            $web,
+            $newtopicname,
+            "nexml.xml",
+            {
+                file     => $filename,
+                filesize => $fileSize,
+                filedate => $fileDate,
+            }
+        );
+        if ($debug) {
+            $dinfo = $dinfo . 'linked nexml to new topic\n';
+        }
+
+        # delete temp file
+        unlink($filename) if ( $filename && -e $filename );
+        if ($debug) {
+            $dinfo = $dinfo . 'deleted temp topic\n';
+        }
+
+        #     } catch Foswiki::AccessControlException with {
+        # Topic CHANGE access denied
+        #     if($debug){
+        #	$dinfo = $dinfo. 'in access control exp\n';
+        #	}
+        #   } catch Error::Simple with {
+        #     # see documentation on Error
+        #    if($debug){
+        #	$dinfo = $dinfo. 'in simple error\n';
+        #	}
+        #  }
+        # otherwise {
+        #  if($debug){
+        #   $dinfo = $dinfo. 'in otherwise\n';
+        #  }
+        # }
     }
 
 #  Foswiki::Func::saveTopic("Main","testing", $meta,$text,{ forcenewrevision => 1 });
 # redirect to new topic
-  my $redirect = Foswiki::Func::getScriptUrl($web,$newtopicname,'view');
-  Foswiki::Func::redirectCgiQuery(undef,$redirect);
-# return "$makeTree 1 $dinfo";
-#   } 
-#   or do 
-#   { 
-#       return "PhyloWidgetError";
-# return "$@";
-# return $dinfo;
-#   };
+    my $redirect = Foswiki::Func::getScriptUrl( $web, $newtopicname, 'view' );
+    Foswiki::Func::redirectCgiQuery( undef, $redirect );
+
+    # return "$makeTree 1 $dinfo";
+    #   }
+    #   or do
+    #   {
+    #       return "PhyloWidgetError";
+    # return "$@";
+    # return $dinfo;
+    #   };
 }
+
 # create temp file namespace
 sub tempFileName {
-  # create file in work area
-  my $filename = Foswiki::Func::getWorkArea('PhyloWidgetPlugin');
-  return $filename.'/nexml'.int( rand(1000000000) );
+
+    # create file in work area
+    my $filename = Foswiki::Func::getWorkArea('PhyloWidgetPlugin');
+    return $filename . '/nexml' . int( rand(1000000000) );
+}
+sub TREEPNG {
+    my ( $session, $params, $Atopic, $Aweb, $topicObject ) = @_;
+    my $rest = Foswiki::Func::getScriptUrl(undef,undef,'rest');
+    my $topicURL = Foswiki::Func::getScriptUrl('System','PhyloNewickViewer','view');
+    my ($width,$height) = ($params->{width},$params->{height});
+    #return '<a href="/temi/System/PhyloNexusViewer?qweb=Acacia;qtopic=NexusExplorer;qattachment=joetree.txt"><img src="/temi/bin/rest/PhyloWidgetPlugin/getPNG?qweb=Acacia;qtopic=NexusExplorer;file=joetree.txt;rev=4;height=400;width=400;margin=30;format=nexus"/></a>';
+    return "<a href='$topicURL?qweb=$params->{web};qtopic=$params->{topic};qattach=$params->{attach}'><img src='$rest/PhyloWidgetPlugin/getPNG?qweb=$params->{web};qtopic=$params->{topic};qattach=$params->{attach};rev=4;' height='$height' width='$width'/></a>";
+
+}
+sub getPNG {
+    my ( $session, $subject, $verb, $responses ) = @_;
+    my $request;
+    if ( defined &Foswiki::Func::getRequestObject ) {
+        $request = Foswiki::Func::getRequestObject();
+    }
+    else {
+        $request = Foswiki::Func::getCgiQuery();
+    }
+    my ( $web, $topic ) =
+      ( $request->param('qweb'), $request->param('qtopic') );
+    my $filename = $request->param('qattach');
+    my $rev      = $request->param('rev');
+    my $width    = $request->param('width');
+    my $height   = $request->param('height');
+    my $margin   = $request->param('margin');
+    my $fontSize = $request->param('fontsize');
+    my $format   = $request->param('format') || 'newick';
+    ( $web, $topic ) = Foswiki::Func::normalizeWebTopicName( $web, $topic );
+
+    #return $web.' '.$topic;
+    #my $topicObject = Foswiki::Meta->new($session,$web,$topic);
+    my $treeData =
+      Foswiki::Func::readAttachment( $web, $topic, $filename, $rev );
+    my $io    = IO::String->new($treeData);
+    my $treei = Bio::TreeIO->new( -fh => $io, -format => $format );
+    my $fh    = IO::String->new();
+    my $treeo = Bio::TreeIO->new(
+        -fh        => $fh,
+        -format    => 'svggraph',
+        -WIDTH     => $width,
+        -HEIGHT    => $height,
+        -MARGIN    => $margin,
+        -FONT_SIZE => $fontSize
+    );
+
+    #while ( my $tree = $treei->next_tree() ) {
+    my $tree = $treei->next_tree();
+    #$treeo->write_tree($tree);
+
+    #NEXUS FILES
+    #my $nexus = Bio::NEXUS->new();
+    #return "$web.$topic $filename $treeData";
+    #$nexus->read({format=>'string',param=>$treeData});
+    #$tree = @{ $nexus->get_block("trees")->get_trees() }[1]->as_string();
+    #return $tree;
+
+    my $temp = tempFileName();
+    my $treeio = Bio::Tree::Draw::Cladogram->new(-bootstrap=>0,-tree=>$tree,-compact=>1);
+    $treeio->print(-file=>$temp.'.eps');
+    my $response = $session->{response};
+    $response->header( -type => 'image/png', -status => '200' );
+    use Image::Magick;
+    my $image = Image::Magick->new();
+    $image->read("$temp.eps");
+    my @blob = $image->ImageToBlob(magick=>'PNG');
+    undef $image;
+    unlink $temp if ($temp && -e $temp);
+    return join('',@blob);
 }
 
 # The function used to handle the %EXAMPLETAG{...}% macro
 # You would have one of these for each macro you want to process.
 sub _EXAMPLETAG {
-    my($session, $params, $topic, $web, $topicObject) = @_;
+    my ( $session, $params, $topic, $web, $topicObject ) = @_;
+
     # $session  - a reference to the Foswiki session object
     #             (you probably won't need it, but documented in Foswiki.pm)
-    # $params=  - a reference to a Foswiki::Attrs object containing 
+    # $params=  - a reference to a Foswiki::Attrs object containing
     #             parameters.
     #             This can be used as a simple hash that maps parameter names
     #             to values, with _DEFAULT being the name for the default
@@ -552,50 +683,62 @@ sub _EXAMPLETAG {
     # For example, %EXAMPLETAG{'hamburger' sideorder="onions"}%
     # $params->{_DEFAULT} will be 'hamburger'
     # $params->{sideorder} will be 'onions'
-     use Data::Dumper;    
-#     my $topic = $Foswiki::SESSION->{topicName};
+    use Data::Dumper;
 
-#     my $webname = '';
+    #     my $topic = $Foswiki::SESSION->{topicName};
 
-#     Foswiki::Func::writeDebug('in _EXAMPLETAG()');
-    my @str =();
-#     my @terms = ('height','width','tree','menu');
+    #     my $webname = '';
 
-    my $url ='';
-    my @tree = ();
-    my $theweb ='';
-    my $thetopic='';
-    my $attach ='';
-    my $webName = $Foswiki::SESSION->{webName};
+    #     Foswiki::Func::writeDebug('in _EXAMPLETAG()');
+    my @str = ();
+
+    #     my @terms = ('height','width','tree','menu');
+
+    my $url      = '';
+    my @tree     = ();
+    my $theweb   = '';
+    my $thetopic = '';
+    my $attach   = '';
+    my $webName  = $Foswiki::SESSION->{webName};
     $url = $params->{'_DEFAULT'};
-    ($theweb,$thetopic) = Foswiki::Func::normalizeWebTopicName( $webName, $url);
-#    if($params->{tree}){
-#      push @tree, "tree:'$params->{tree}'";
-#    }els
-    if($params->{'_DEFAULT'} && $params->{'attachment'}){
-#       my $theurl = Foswiki::Func::getViewUrl( $theweb,$thetopic);
-      my $host = Foswiki::Func::getUrlHost();
-#       my $pub = Foswiki::Func::getPubUrlPath();
-      $attach = $params->{'attachment'};
-      push @tree, "tree:'$host/$pubUrlPath/$theweb/$thetopic/$attach'";
-    }elsif($params->{'_DEFAULT'}){
+    ( $theweb, $thetopic ) =
+      Foswiki::Func::normalizeWebTopicName( $webName, $url );
+
+    #    if($params->{tree}){
+    #      push @tree, "tree:'$params->{tree}'";
+    #    }els
+    if ( $params->{'_DEFAULT'} && $params->{'attachment'} ) {
+
+        #       my $theurl = Foswiki::Func::getViewUrl( $theweb,$thetopic);
+        my $host = Foswiki::Func::getUrlHost();
+
+        #       my $pub = Foswiki::Func::getPubUrlPath();
+        $attach = $params->{'attachment'};
+        push @tree, "tree:'$host/$pubUrlPath/$theweb/$thetopic/$attach'";
+    }
+    elsif ( $params->{'_DEFAULT'} ) {
+
 #       ($theweb,$thetopic) = Foswiki::Func::normalizeWebTopicName($webName, $url);
-      my $theurl = Foswiki::Func::getViewUrl( $theweb,$thetopic);
-      push @tree ,"tree:'$theurl?phylofixamps=1;template=phylonhx'" if $theurl;
-    }elsif($params->{'url'}){
-#       $url = $params->{'url'};
-	push @tree , "tree:'$params->{'url'}'" if $params->{'url'};
+        my $theurl = Foswiki::Func::getViewUrl( $theweb, $thetopic );
+        push @tree, "tree:'$theurl?phylofixamps=1;template=phylonhx'"
+          if $theurl;
+    }
+    elsif ( $params->{'url'} ) {
+
+        #       $url = $params->{'url'};
+        push @tree, "tree:'$params->{'url'}'" if $params->{'url'};
     }
     while ( my ( $key, $value ) = each( %{$params} ) ) {
-    push( @tree, "$key: '$value'" )
-    if ( $key ne "_RAW" )
-    and ( $key ne "_DEFAULT" )
-    and ( $key ne "url" );
+        push( @tree, "$key: '$value'" )
+          if ( $key ne "_RAW" )
+          and ( $key ne "_DEFAULT" )
+          and ( $key ne "url" );
     }
-#     push @tree ,"height:$params->{'height'}" if $params->{'height'};
-#     push @tree ,"width:$params->{'width'}" if $params->{'width'};
-#     push @tree ,"menu:'$params->{'menu'}'" if $params->{'menu'};
-#     my $urls = 'url';
+
+    #     push @tree ,"height:$params->{'height'}" if $params->{'height'};
+    #     push @tree ,"width:$params->{'width'}" if $params->{'width'};
+    #     push @tree ,"menu:'$params->{'menu'}'" if $params->{'menu'};
+    #     my $urls = 'url';
 
 #     foreach my $term (@terms){
 #       if($params->{$term}){
@@ -605,38 +748,42 @@ sub _EXAMPLETAG {
 #       }
 #     }
     Foswiki::Func::addToZone(
-      "script",
-      "PhyloWidgetPlugin/Javascript",
-     # "<link rel='stylesheet' href='$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/themes/base/jquery.ui.resizable.css'>"
-      "<style>
+        "script",
+        "PhyloWidgetPlugin/Javascript",
+
+# "<link rel='stylesheet' href='$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/themes/base/jquery.ui.resizable.css'>"
+        "<style>
 	#phylowidgetobject { padding: 0.5em; }
         #phylowidgetobject h3 { text-align: center; margin: 0; }
 	.ui-resizable-helper { border: 2px dotted #00F; }
 	</style>"
-      #."<link rel='stylesheet' href='$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/themes/base/jquery-ui.css'>"
-      #."<link rel='stylesheet' href='$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/themes/base/jquery.ui.core.css'>"
-      ."<script src='$pubUrlPath/$Foswiki::cfg{SystemWebName}/PhyloWidgetPlugin/scripts/phylowidget.js'></script>"
-      ."<script>PhyloWidget.codebase = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/PhyloWidgetPlugin/lib';</script>"
-      #."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/jquery-1.4.2.js'></script>"
-      #."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/ui/jquery.ui.core.js'></script>"
-      #."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/ui/jquery.ui.widget.js'></script>"
-      #."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/ui/jquery.ui.mouse.js'></script>"
-      #."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/ui/jquery.ui.resizable.js'></script>"
-      #."<script>
+
+#."<link rel='stylesheet' href='$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/themes/base/jquery-ui.css'>"
+#."<link rel='stylesheet' href='$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/themes/base/jquery.ui.core.css'>"
+          . "<script src='$pubUrlPath/$Foswiki::cfg{SystemWebName}/PhyloWidgetPlugin/scripts/phylowidget.js'></script>"
+          . "<script>PhyloWidget.codebase = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/PhyloWidgetPlugin/lib';</script>"
+
+#."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/jquery-1.4.2.js'></script>"
+#."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/ui/jquery.ui.core.js'></script>"
+#."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/ui/jquery.ui.widget.js'></script>"
+#."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/ui/jquery.ui.mouse.js'></script>"
+#."<script src = '$hostUrL$pubUrlPath/$Foswiki::cfg{SystemWebName}/JQueryPlugin/ui/jquery.ui.resizable.js'></script>"
+#."<script>
 #  \$('document').ready(function(){
- #   \$('#phylowidgetobject').resizable({
-  #    helper:'ui-resizable-helper',
-   #   stop:function(event,ui){
-    #    var phylo = \$('#phylowidgetobject');
-     #   PhyloWidget.changeSetting('height',phylo.height()-2+'');
-      #  PhyloWidget.changeSetting('width',phylo.width()-2+'');
-       # document.pulpcore_object.width = phylo.width()-2;
-       # document.pulpcore_object.height = phylo.height()-2;
-     # }
-    #});
- # });
-  #</script>"
+#   \$('#phylowidgetobject').resizable({
+#    helper:'ui-resizable-helper',
+#   stop:function(event,ui){
+#    var phylo = \$('#phylowidgetobject');
+#   PhyloWidget.changeSetting('height',phylo.height()-2+'');
+#  PhyloWidget.changeSetting('width',phylo.width()-2+'');
+# document.pulpcore_object.width = phylo.width()-2;
+# document.pulpcore_object.height = phylo.height()-2;
+# }
+#});
+# });
+#</script>"
     );
+
 #     my $restUrlPath = Foswiki::Func::getScriptUrl(undef,undef,'rest');
 #     Foswiki::Func::addToZone(
 #     "script",
@@ -668,30 +815,34 @@ sub _EXAMPLETAG {
 # 	</script>",
 # 	'JQUERYPLUGIN'
 # 	);
-	
+
 # <script src='/pub/System/PhyloWidgetPlugin/scripts/phylowidget.js'></script>
 #     <script src='http://git.trin.org.au/phylowidget/phylowidget/scripts/phylowidget.js'></script>
 # <a href='$pubUrlPath/$Foswiki::cfg{SystemWebName}/PhyloWidgetPlugin/scripts/phylowidget.js'>here</a>
 #   my $str = join(',',@str);
 #   my $theurl = Foswiki::Func::getViewUrl($webname,$url);
 
-# add the function that will interface with processClade rest handler
-  my $mobbs = '%INCLUDE{"System.VarPHYLOWIDGET" section="jscode"}%';
-  $mobbs = Foswiki::Func::expandCommonVariables($mobbs);
-  Foswiki::Func::addToZone('script','jscode','<script>'.$mobbs.'</script>','JQUERY');
+    # add the function that will interface with processClade rest handler
+    my $mobbs = '%INCLUDE{"System.VarPHYLOWIDGET" section="jscode"}%';
+    $mobbs = Foswiki::Func::expandCommonVariables($mobbs);
+    Foswiki::Func::addToZone( 'script', 'jscode',
+        '<script>' . $mobbs . '</script>', 'JQUERY' );
 
-# add a form to the returned text
-  my $form = '%INCLUDE{"System.VarPHYLOWIDGET" section="cladeform"}%';
-#   $form = Foswiki::Func::addToZone('','','');
+    # add a form to the returned text
+    my $form = '%INCLUDE{"System.VarPHYLOWIDGET" section="cladeform"}%';
 
-  my $height = $params->{'height'}+6;
-  my $width = $params->{'width'}+6;
-  my $param = join ',', @tree;
-  return "<div id = 'phylowidgetobject' style='width: $width; height: $height; border: 2px solid; padding: 3px;display:inline-table'><script>PhyloWidget.writeWidget({$param});</script> $form</div>";
+    #   $form = Foswiki::Func::addToZone('','','');
+
+    my $height = $params->{'height'} + 6;
+    my $width  = $params->{'width'} + 6;
+    my $param  = join ',', @tree;
+    return
+"<div id = 'phylowidgetobject' style='width: $width; height: $height; border: 2px solid; padding: 3px;display:inline-table'><script>PhyloWidget.writeWidget({$param});</script> $form</div>";
+
 # style='width: $width; height: $height; border: 2px solid; padding: 3px;display:inline-table'
 #   return "<div style='border-width:1px;border-style:solid;padding:2px;'>WEB: $theweb url: $thetopic created url: $createdurl<!--<script>PhyloWidget.writeWidget({$str});</script>--></div>";
 
-#      return "<h1>Phylowidget! :)</h1><pre>" . Dumper($params) . '</pre>';
+    #      return "<h1>Phylowidget! :)</h1><pre>" . Dumper($params) . '</pre>';
 
 }
 
@@ -715,19 +866,21 @@ Since Foswiki::Plugins::VERSION = '2.0'
 =cut
 
 sub postRenderingHandler {
-	my $requestObject;
+    my $requestObject;
 
-	if (defined &Foswiki::Func::getRequestObject) {
-		$requestObject = Foswiki::Func::getRequestObject();
-	} else {
-		$requestObject = Foswiki::Func::getCgiQuery();
-	}
+    if ( defined &Foswiki::Func::getRequestObject ) {
+        $requestObject = Foswiki::Func::getRequestObject();
+    }
+    else {
+        $requestObject = Foswiki::Func::getCgiQuery();
+    }
+
     # You can work on $text in place by using the special perl
     # variable $_[0]. These allow you to operate on $text
     # as if it was passed by reference; for example:
-    if (Foswiki::Func::isTrue($requestObject->param('phylofixamps'), 0) ){
-		use HTML::Entities;
-		decode_entities($_[0]);
+    if ( Foswiki::Func::isTrue( $requestObject->param('phylofixamps'), 0 ) ) {
+        use HTML::Entities;
+        decode_entities( $_[0] );
     }
 
     return;

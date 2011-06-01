@@ -1,5 +1,7 @@
 data/System/PhyloWidgetPlugin.txt 0644
 data/System/PhyloNexusViewer.txt 0644
+data/System/PhyloNewickViewer.txt 0644
+data/System/CharacterGridView.txt 0644
 data/System/PhyloWidgetExample.txt 0644
 data/System/PhyloWidgetViewHelper.txt 0644
 data/System/VarNEXUSTREES.txt 0644
