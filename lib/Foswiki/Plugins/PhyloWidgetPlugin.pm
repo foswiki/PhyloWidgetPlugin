@@ -273,9 +273,9 @@ sub getNHXfromNEX{
     my $nexus = Bio::NEXUS->new();
     my $atree ;
     my $content;
-    eval{
-      $content = Foswiki::Func::readAttachment($web,$topic,$attachment)
-    } or croak return "error reading nexus";
+    #eval{
+      $content = Foswiki::Func::readAttachment($web,$topic,$attachment);
+    #} or croak return "error reading nexus";
 #      use Data::Dumper;
 # return "<h1>Phylowidget! :)</h1><pre>" . Dumper($requestObject->param()) . '</pre>';
 #     return $url;
