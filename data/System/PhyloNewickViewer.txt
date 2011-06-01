@@ -1,0 +1,5 @@
+%PHYLOWIDGET{"%theWeb%.%theTopic%" attachment="%theAttach%" UseBranchLengths="true"}%
+    * Set theWeb = %URLPARAM{"qweb"}%
+    * Set theTopic = %URLPARAM{"qtopic"}%
+    * Set theAttach = %URLPARAM{"qattach"}%
+

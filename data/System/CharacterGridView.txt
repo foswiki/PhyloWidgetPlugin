@@ -1,0 +1,22 @@
+%META:TOPICINFO{author="TemiV" comment="save topic" date="1306909975" format="1.1" reprev="6" version="6"}%
+%GRID{
+   query="%FORMATLIST{"%INCLUDE{"%PUBURL%/%BASEWEB%/%BASETOPIC%/selection.txt"}%" separator="' OR gen_spec='" header="gen_spec='" footer="'" split=","}%"
+   multiselect="on"
+   form="AcaciaCharactersForm"
+   web="Acacia.LLB.MigrationScriptsAcaciaCharacters"
+   colname_width="30"
+   columns="Topic, genus, species, habit, Bark, Triangular_shaped_phyllode, Aril_colour, Statedistribution, Botanicalregions"
+   colname_title="title"
+   filterbar="on"
+   edit="on"
+   Triangular_shaped_phyllode_title="%RENDERFORDISPLAY{form="Acacia/LLB/MigrationScriptsAcaciaCharacters.AcaciaCharactersForm" fields="Triangular_shaped_phyllode" format="$description"}%"
+   pager="on"
+   width="auto"
+   height="auto"
+   rownumbers="on"
+}%
+%IF{"isweb 'Acacia.LLB.MigrationScriptsAcaciaCharacters'" then="yes" else="no"}%
+%QUERY{"'Acacia.LLB.MigrationScriptsAcaciaCharacters'/fields.name"}%
+
+%META:PREFERENCE{name="PERM_ID_HUMAN" title="PERM_ID_HUMAN" type="Local" value="Acacia_CharacterGridView"}%
+%META:PREFERENCE{name="PERM_ID_MD5" title="PERM_ID_MD5" type="Local" value="c608464d530c849c819d11fbe4c9a90b"}%
