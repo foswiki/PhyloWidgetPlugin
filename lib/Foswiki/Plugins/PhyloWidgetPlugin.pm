@@ -66,7 +66,7 @@ sub initPlugin {
     # seen in the topic text.
     Foswiki::Func::registerTagHandler( 'PHYLOWIDGET', \&_EXAMPLETAG );
     Foswiki::Func::registerTagHandler( 'NEXUSTREES',  \&LISTNEXUSTREES );
-    Foswiki::Func::registerTagHandler( 'TREEPNG', \&TREEPNG );
+    Foswiki::Func::registerTagHandler( 'TREEPNG',     \&TREEPNG );
     $baseWeb   = $web;
     $baseTopic = $topic;
 
@@ -254,9 +254,10 @@ sub processClade {
     #$c = $count;
     $count        = $count + 1;
     $newtopicname = "$web$topic$count";
+
     #incase of subwebs
     $newtopicname =~ s/\///g;
-    $section      = "Request";
+    $section = "Request";
 
     # appropriate content for the new topic
     if ($makeTree) {
@@ -408,8 +409,12 @@ sub processClade {
 
 #  Foswiki::Func::saveTopic("Main","testing", $meta,$text,{ forcenewrevision => 1 });
 # redirect to new topic
-    my $redirect = Foswiki::Func::getScriptUrl( "System", "ViewGenusData", "view" );
-    Foswiki::Func::redirectCgiQuery( undef, $redirect."?aWeb=$web;aTopic=$newtopicname;aAttach=selection.txt;genus=$genus");
+    my $redirect =
+      Foswiki::Func::getScriptUrl( "System", "ViewGenusData", "view" );
+    Foswiki::Func::redirectCgiQuery( undef,
+        $redirect
+          . "?aWeb=$web;aTopic=$newtopicname;aAttach=selection.txt;genus=$genus"
+    );
 
     # return "$makeTree 1 $dinfo";
     #   }
@@ -428,14 +433,18 @@ sub tempFileName {
     my $filename = Foswiki::Func::getWorkArea('PhyloWidgetPlugin');
     return $filename . '/nexml' . int( rand(1000000000) );
 }
+
 sub TREEPNG {
     my ( $session, $params, $Atopic, $Aweb, $topicObject ) = @_;
-    my $rest = Foswiki::Func::getScriptUrl(undef,undef,'rest');
-    my $topicURL = Foswiki::Func::getScriptUrl('System','PhyloNewickViewer','view');
-    my ($width,$height) = ($params->{width},$params->{height});
-    return "<a href='$topicURL?qweb=$params->{web};qtopic=$params->{topic};qattach=$params->{attach}'><img src='$rest/PhyloWidgetPlugin/getPNG?qweb=$params->{web};qtopic=$params->{topic};qattach=$params->{attach};rev=4;' height='$height' width='$width'/></a>";
+    my $rest = Foswiki::Func::getScriptUrl( undef, undef, 'rest' );
+    my $topicURL =
+      Foswiki::Func::getScriptUrl( 'System', 'PhyloNewickViewer', 'view' );
+    my ( $width, $height ) = ( $params->{width}, $params->{height} );
+    return
+"<a href='$topicURL?qweb=$params->{web};qtopic=$params->{topic};qattach=$params->{attach}'><img src='$rest/PhyloWidgetPlugin/getPNG?qweb=$params->{web};qtopic=$params->{topic};qattach=$params->{attach};rev=4;' height='$height' width='$width'/></a>";
 
 }
+
 sub getPNG {
     my ( $session, $subject, $verb, $responses ) = @_;
     my $request;
@@ -474,19 +483,22 @@ sub getPNG {
 
     my $tree = $treei->next_tree();
 
-
-    my $temp = tempFileName();
-    my $treeio = Bio::Tree::Draw::Cladogram->new(-bootstrap=>0,-tree=>$tree,-compact=>1);
-    $treeio->print(-file=>$temp.'.eps');
+    my $temp   = tempFileName();
+    my $treeio = Bio::Tree::Draw::Cladogram->new(
+        -bootstrap => 0,
+        -tree      => $tree,
+        -compact   => 1
+    );
+    $treeio->print( -file => $temp . '.eps' );
     my $response = $session->{response};
     $response->header( -type => 'image/png', -status => '200' );
     use Image::Magick;
     my $image = Image::Magick->new();
     $image->read("$temp.eps");
-    my @blob = $image->ImageToBlob(magick=>'PNG');
+    my @blob = $image->ImageToBlob( magick => 'PNG' );
     undef $image;
-    unlink $temp if ($temp && -e $temp);
-    return join('',@blob);
+    unlink $temp if ( $temp && -e $temp );
+    return join( '', @blob );
 }
 
 # The function used to handle the %EXAMPLETAG{...}% macro
@@ -504,7 +516,7 @@ sub _EXAMPLETAG {
     my $thetopic = '';
     my $attach   = '';
     my $webName  = $Foswiki::SESSION->{webName};
-    my $genus = $params->{genus} || '';
+    my $genus    = $params->{genus} || '';
     $url = $params->{'_DEFAULT'};
     ( $theweb, $thetopic ) =
       Foswiki::Func::normalizeWebTopicName( $webName, $url );
