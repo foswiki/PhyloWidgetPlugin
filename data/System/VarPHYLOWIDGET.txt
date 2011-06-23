@@ -48,10 +48,10 @@ form.find("[name ='phylo']").attr('value',phylo);
 form.find("[name ='genus']").attr('value','$genus');
 form.submit();
 //clade= escape(clade);
-//var url = 'http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/processClade?clade=' + clade + ';theweb=' + foswiki.web + ';thetopic=' + foswiki.topic + ';phylo='+phylo+';';
+//var url = 'http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/processClade?clade=' + clade + ';theweb=' + foswiki.getPreference('WEB') + ';thetopic=' + foswiki.getPreference('TOPIC') + ';phylo='+phylo+';';
 //window.location = url;
 
-//$.get('http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/processClade',{'clade':clade,'theweb':foswiki.web,'thetopic':foswiki.topic,'phylo':phylo,function(data){ 
+//$.get('http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/processClade',{'clade':clade,'theweb':foswiki.getPreference('WEB'),'thetopic':foswiki.getPreference('TOPIC'),'phylo':phylo,function(data){ 
 //alert('processing is now complete:'+data);
 
 //window.location = data;
@@ -92,9 +92,9 @@ $('<div id=\"overlay\"/>').css({
 function processClade(clade,phylo){
 //alert(clade);
 clade= escape(clade);
-var url = 'http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/processClade?clade=' + clade + ';theweb=' + foswiki.web + ';thetopic=' + foswiki.topic + ';phylo='+phylo+';';
+var url = 'http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/processClade?clade=' + clade + ';theweb=' + foswiki.getPreference('WEB') + ';thetopic=' + foswiki.getPreference('TOPIC') + ';phylo='+phylo+';';
 window.location = url;
-//$.get('http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/processClade',{'clade':clade,'theweb':foswiki.web,'thetopic':foswiki.topic,'phylo':phylo,function(data){ 
+//$.get('http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/processClade',{'clade':clade,'theweb':foswiki.getPreference('WEB'),'thetopic':foswiki.getPreference('TOPIC'),'phylo':phylo,function(data){ 
 //alert('processing is now complete:'+data);
 
 //window.location = data;
