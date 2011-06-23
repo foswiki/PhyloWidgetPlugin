@@ -1,0 +1,49 @@
+%META:TOPICINFO{author="TemiV" comment="save topic" date="1308614663" format="1.1" reprev="5" version="5"}%
+Choose: <select id="" onchange="document.location = '%url%'+$.query.set('source',this.options[this.selectedIndex].value)"><option %IF{"'TaxonID'='%URLPARAM{"source"}%'" then=" selected='selected'"}%>TaxonID</option><option %IF{"'Character'='%URLPARAM{"source"}%'" then=" selected='selected'"}%>Character</option></select>
+
+%GRID{
+   query="%FORMATLIST{"%INCLUDE{"%attach%"}%" separator="' OR gen_spec='" header="gen_spec='" footer="'" split=","}%"
+   multiselect="on"
+   form="AcaciaCharactersForm"
+   web="Acacia.LLB.MigrationScriptsAcaciaCharacters"
+   colname_width="30"
+   columns="%IF{"'%URLPARAM{"source"}%'='Character'" else="%taxonid%" then="%characters%"}%"
+   colname_title="title"
+   filterbar="on"
+   edit="on"
+   Triangular_shaped_phyllode_title="%RENDERFORDISPLAY{form="Acacia/LLB/MigrationScriptsAcaciaCharacters.AcaciaCharactersForm" fields="Triangular_shaped_phyllode" format="$description"}%"
+   Statedistribution_title="State Distribution"
+   Botanicalregions_title="Botanical Regions"
+   Aril_colour_title="Aril Colour"
+   extra_taxon_title="Species Information"
+   TaxonID_title="Link to Laboratory details"
+   Topic_title="Link to Character details"
+   pager="on"
+   width="auto"
+   height="auto"
+   rownumbers="on"
+   topicfieldregex="Topic|TaxonID"
+}%
+<!--
+%<nop>GRID{
+   query="%FORMATLIST{"%INCLUDE{"%PUBURL%/%BASEWEB%/%BASETOPIC%/selection.txt"}%" separator="' OR gen_spec='" header="gen_spec='" footer="'" split=","}%"
+   multiselect="on"
+   form="AcaciaCharactersForm"
+   web="Acacia.LLB.MigrationScriptsAcaciaCharacters"
+   colname_width="30"
+   columns="Topic, genus, species, extra_taxon, Bark,Aril_colour, Pod, Aril, Branchlet, Statedistribution, Botanicalregions"
+   colname_title="title"
+   filterbar="on"
+   edit="on"
+   Triangular_shaped_phyllode_title="%RENDERFORDISPLAY{form="Acacia/LLB/MigrationScriptsAcaciaCharacters.AcaciaCharactersForm" fields="Triangular_shaped_phyllode" format="$description"}%"
+   pager="on"
+   width="auto"
+   height="auto"
+   rownumbers="on"
+}%
+-->
+
+%META:LINK{name="1" address="Acacia.TaxonID" scope="internal" topic="TaxonID" type="autolink" web="Acacia"}%
+%META:PREFERENCE{name="PERM_ID_HUMAN" title="PERM_ID_HUMAN" type="Local" value="Acacia_AcaciaRecipe"}%
+%META:PREFERENCE{name="PERM_ID_MD5" title="PERM_ID_MD5" type="Local" value="d179b86ce721cc0da6fd1267ff56013e"}%
+%META:SLPROPERTIES{num="0" value=""}%

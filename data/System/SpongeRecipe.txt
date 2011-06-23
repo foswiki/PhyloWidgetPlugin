@@ -1,0 +1,46 @@
+%META:TOPICINFO{author="TemiV" comment="reprev" date="1308612625" format="1.1" reprev="6" version="6"}%
+%GRID{query="%EXTRACT{text="%INCLUDE{"%attach%"}%" pattern="OTU[_\s]([^,);']*)" separator="' OR name='" header="name='" footer="'" split="," format="OTU$1"}%"
+form="TaxonProfile/Definitions.Sponge_OTU_Form"
+   web="Marine/Sponges/Taxa"
+   columns="Topic,Sponge_Genus,Sponge_Species,Sponge_Megascleres,Sponge_Microscleres"
+   filterbar="on"
+   rownumbers="off"
+   width="auto"
+   Topic_title="Link"
+   Sponge_Genus_title="Genus"
+   Sponge_Species_title="Species"
+   Sponge_Megascleres_title="Megascleres"
+   Sponge_Microscleres_title="Microscleres"
+
+   Topic_width="80"
+   Sponge_Genus_width="100"
+   Sponge_Species_width="100"
+   Sponge_Remarks_width="900"
+   Sponge_Megascleres_width="150"
+   Sponge_Microscleres_width="150"
+   pager="on"
+   height="auto"
+}%
+
+%GRID{query="%EXTRACT{text="%INCLUDE{"%attach%"}%" pattern="\**([^\s_',]+)[\s_][^,'\)]*" separator="' OR name='" header="name='" footer="'" split="," format="$1"}%"
+form="TaxonProfile/Definitions.Sponge_Specimen_Form"
+   web="Marine/Sponges/Specimens"
+   columns="Topic,Sponge_DeterminationOTU,Sponge_NationName"
+   filterbar="on"
+   rownumbers="off"
+   width="auto"
+   pager="on"
+   height="auto"
+   topicfieldregex="Topic|Sponge_DeterminationOTU"
+Sponge_DeterminationOTU_title="Sponge Determination OTU"
+Sponge_NationName_title="Sponge Nation Name"
+}%
+<!--
+   * Set List = %INCLUDE{"%PUBURL%/%BASEWEB%/%BASETOPIC%/selection.txt"}%
+ * Set List = %INCLUDE{"%PUBURL%/Acacia/AcaciaNexusExplorer16/selection.txt"}%
+   * Set otu = %EXTRACT{text="%INCLUDE{"%PUBURL%/%BASEWEB%/%BASETOPIC%/selection.txt"}%" pattern="OTU[_\s]([^,);']*)" separator="' OR name='" header="name='" footer="'" split="," format="OTU$1"}%
+   * Set specimen = %EXTRACT{text="%INCLUDE{"%PUBURL%/%BASEWEB%/%BASETOPIC%/selection.txt"}%" pattern="\**([^\s_',]+)[\s_][^,'\)]*" separator="' OR name='" header="name='" footer="'" split="," format="$1"}%
+ -->
+
+%META:PREFERENCE{name="PERM_ID_HUMAN" title="PERM_ID_HUMAN" type="Local" value="Acacia_SpongeRecipe"}%
+%META:PREFERENCE{name="PERM_ID_MD5" title="PERM_ID_MD5" type="Local" value="4d1127985b03f8477727ec8fa7e47d6d"}%

@@ -1,0 +1,15 @@
+%META:TOPICINFO{author="TemiV" comment="reprev" date="1308611450" format="1.1" reprev="4" version="5"}%
+%JQREQUIRE{"queryobject"}%
+%IF{"'%genus%'='Acacia'" then="$percntINCLUDE{\"System.AcaciaRecipe\"}$percnt"}%
+%IF{"'%genus%'='Sponge'" then="$percntINCLUDE{\"System.SpongeRecipe\"}$percnt"}%
+<!--
+   * Set url = %SCRIPTURLPATH{"view"}%/%BASEWEB%/%BASETOPIC%
+   * Set attach = %PUBURL%/%URLPARAM{"aWeb"}%/%URLPARAM{"aTopic"}%/%URLPARAM{"aAttach"}%
+   * Set characters = Topic, genus, species, extra_taxon, Bark,Aril_colour, Pod, Aril, Branchlet, Statedistribution, Botanicalregions
+   * Set taxonid = species, extra_taxon, Topic, TaxonID
+   * Set genus = %URLPARAM{"genus"}%
+-->
+
+%META:LINK{name="1" address="System.TaxonID" scope="internal" topic="TaxonID" type="autolink" web="System"}%
+%META:PREFERENCE{name="PERM_ID_HUMAN" title="PERM_ID_HUMAN" type="Local" value="System_ViewGenusData"}%
+%META:PREFERENCE{name="PERM_ID_MD5" title="PERM_ID_MD5" type="Local" value="6a6f65b30e18f5aff88f44affe6a2834"}%

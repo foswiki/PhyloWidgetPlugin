@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="BaseUserMapping_666" comment="reprev" date="1305079398" format="1.1" reprev="16" version="16"}%
+%META:TOPICINFO{author="TemiV" comment="reprev" date="1306970937" format="1.1" reprev="16" version="3"}%
 %META:TOPICPARENT{name="PhyloWidgetPlugin"}%
 #VarPHYLOWIDGET
 ---+++ PHYLOWIDGET{"Topic"} -- display phylogeny
@@ -9,26 +9,31 @@
    height="800"
    width="600"}%</verbatim>
    * Supported parameters:
-    | *Parameter:* | *Description:* | *Default:* |
-    | ="Web.Topic"= | Topic name whose content is either in nexus format or has an nexus file attachment. | - |
-    | =attachment="example.nex"= | A nexus formatted file attachment. | - |
-    | =url="www.treebase.org/nexus.nex"= | Url to an external resource can be included in this parameter. | - |
-    | =height="800"= | Sets the height of the PhyloWidget applet. | - |
-    | =width="600"= | Sets the width of the PhyloWidget applet. | - |
-    * Examples: <verbatim class="tml">
+| *Parameter:* | *Description:* | *Default:* |
+| ="Web.Topic"= | Topic name whose content is either in nexus format or has an nexus file attachment. | - |
+| =attachment="example.nex"= | A nexus formatted file attachment. | - |
+| =url="www.treebase.org/nexus.nex"= | Url to an external resource can be included in this parameter. | - |
+| =height="800"= | Sets the height of the PhyloWidget applet. | - |
+| =width="600"= | Sets the width of the PhyloWidget applet. | - |
+| =genus= | Mention the genus of the displayed tree. It is important if the clade information is to be displayed. | - |
+    * Examples:
+<verbatim class="tml">
     %PHYLOWIDGET{"%SYSTEMWEB%.PhyloWidgetExample"
     height="495"
     width="420"}%</verbatim>
+
     * Result (if installed):
-	<div id="phylo">
-	%PHYLOWIDGET{"%SYSTEMWEB%.PhyloWidgetExample"
-	height="495"
-	width="420"
-	useBranchLengths="true"
-	}%
-<!--	<div id="loading"><img sytle="justify:centre;" src="%PUBURL%/System/PhyloWidgetPlugin/loading.gif"/>
-	</div>-->
-	</div>
+
+<div id="phylo">
+   %PHYLOWIDGET{"%SYSTEMWEB%.PhyloWidgetExample"
+   height="495"
+   width="420"
+   useBranchLengths="true"
+   }%
+<!--   <div id="loading"><img sytle="justify:centre;" src="%PUBURL%/System/PhyloWidgetPlugin/loading.gif"/>
+   </div>-->
+   </div>
+
    See also: [[PhyloWidgetPlugin]], [[VarNEXUSTREES][NEXUSTREES]]
 <!--%JQREQUIRE{"chili"}%-->
 <!--
@@ -37,9 +42,10 @@
 function processClade(clade,phylo){
 var form = $("#cladeform");
 form.find("[name ='clade']").attr('value',clade);
-form.find("[name ='theweb']").attr('value',foswiki.web);
-form.find("[name ='thetopic']").attr('value',foswiki.topic);
+form.find("[name ='theweb']").attr('value',foswiki.getPreference('WEB'));
+form.find("[name ='thetopic']").attr('value',foswiki.getPreference('TOPIC'));
 form.find("[name ='phylo']").attr('value',phylo);
+form.find("[name ='genus']").attr('value','$genus');
 form.submit();
 //clade= escape(clade);
 //var url = 'http://peperomia-bp/temi/bin/rest/PhyloWidgetPlugin/processClade?clade=' + clade + ';theweb=' + foswiki.web + ';thetopic=' + foswiki.topic + ';phylo='+phylo+';';
@@ -60,6 +66,7 @@ form.submit();
 <input name="theweb" type="hidden" value=""/>
 <input name="thetopic" type="hidden" value=""/>
 <input name="phylo" type="hidden" value=""/>
+<input name="genus" type="hidden" value=""/>
 </form>
 %ENDSECTION{"cladeform"}%
 <!-- %{ADDTOZONE{"script" 
@@ -94,64 +101,38 @@ window.location = url;
 //}});
 }
 "}% -->
----+++ Request 166
-See [[SystemVarPHYLOWIDGET166]] 
----+++ Request 167
-See [[SystemVarPHYLOWIDGET167]]
 
----+++ Request 168
-See [[SystemVarPHYLOWIDGET168]] 
----+++ Request 169
-See [[SystemVarPHYLOWIDGET169]]
 
----+++ Request 170
-See [[SystemVarPHYLOWIDGET170]]
-
----+++ Request 171
-See [[SystemVarPHYLOWIDGET171]]
-
----+++ Request 172
-See [[SystemVarPHYLOWIDGET172]] 
----+++ Request 173
-See [[SystemVarPHYLOWIDGET173]]
- 
----+++ Request 174
-See [[SystemVarPHYLOWIDGET174]] 
----+++ Request 175
-See [[SystemVarPHYLOWIDGET175]] 
----+++ Request 176
-See [[SystemVarPHYLOWIDGET176]] 
----+++ Request 177
-See [[SystemVarPHYLOWIDGET177]] 
----+++ Request 178
-See [[SystemVarPHYLOWIDGET178]] 
----+++ Request 179
-See [[SystemVarPHYLOWIDGET179]] 
----+++ Request 180
-See [[SystemVarPHYLOWIDGET180]] 
----+++ Request 181
-See [[SystemVarPHYLOWIDGET181]] 
----+++ Request 182
-See [[SystemVarPHYLOWIDGET182]] 
----+++ Request 183
-See [[SystemVarPHYLOWIDGET183]] 
----+++ Request 184
-See [[SystemVarPHYLOWIDGET184]] 
----+++ Request 185
-See [[SystemVarPHYLOWIDGET185]] 
----+++ Request 186
-See [[SystemVarPHYLOWIDGET186]] 
----+++ Request 187
-See [[SystemVarPHYLOWIDGET187]] 
----+++ Request 188
-See [[SystemVarPHYLOWIDGET188]] 
----+++ Request 189
-See [[SystemVarPHYLOWIDGET189]] 
----+++ Request 190
-See [[SystemVarPHYLOWIDGET190]] 
----+++ Request 191
-See [[SystemVarPHYLOWIDGET191]]
 %META:FIELD{name="count" title="number of requests" value="191"}%
+%META:LINK{name="23" address="System.SystemVarPHYLOWIDGET186" scope="internal" topic="SystemVarPHYLOWIDGET186" type="bracket" web="System"}%
+%META:LINK{name="7" address="System.SystemVarPHYLOWIDGET170" scope="internal" topic="SystemVarPHYLOWIDGET170" type="bracket" web="System"}%
+%META:LINK{name="16" address="System.SystemVarPHYLOWIDGET179" scope="internal" topic="SystemVarPHYLOWIDGET179" type="bracket" web="System"}%
+%META:LINK{name="17" address="System.SystemVarPHYLOWIDGET180" scope="internal" topic="SystemVarPHYLOWIDGET180" type="bracket" web="System"}%
+%META:LINK{name="28" address="System.SystemVarPHYLOWIDGET191" scope="internal" topic="SystemVarPHYLOWIDGET191" type="bracket" web="System"}%
+%META:LINK{name="15" address="System.SystemVarPHYLOWIDGET178" scope="internal" topic="SystemVarPHYLOWIDGET178" type="bracket" web="System"}%
+%META:LINK{name="22" address="System.SystemVarPHYLOWIDGET185" scope="internal" topic="SystemVarPHYLOWIDGET185" type="bracket" web="System"}%
+%META:LINK{name="6" address="System.SystemVarPHYLOWIDGET169" scope="internal" topic="SystemVarPHYLOWIDGET169" type="bracket" web="System"}%
+%META:LINK{name="18" address="System.SystemVarPHYLOWIDGET181" scope="internal" topic="SystemVarPHYLOWIDGET181" type="bracket" web="System"}%
+%META:LINK{name="24" address="System.SystemVarPHYLOWIDGET187" scope="internal" topic="SystemVarPHYLOWIDGET187" type="bracket" web="System"}%
+%META:LINK{name="19" address="System.SystemVarPHYLOWIDGET182" scope="internal" topic="SystemVarPHYLOWIDGET182" type="bracket" web="System"}%
+%META:LINK{name="21" address="System.SystemVarPHYLOWIDGET184" scope="internal" topic="SystemVarPHYLOWIDGET184" type="bracket" web="System"}%
+%META:LINK{name="5" address="System.SystemVarPHYLOWIDGET168" scope="internal" topic="SystemVarPHYLOWIDGET168" type="bracket" web="System"}%
+%META:LINK{name="20" address="System.SystemVarPHYLOWIDGET183" scope="internal" topic="SystemVarPHYLOWIDGET183" type="bracket" web="System"}%
+%META:LINK{name="3" address="System.SystemVarPHYLOWIDGET166" scope="internal" topic="SystemVarPHYLOWIDGET166" type="bracket" web="System"}%
+%META:LINK{name="4" address="System.SystemVarPHYLOWIDGET167" scope="internal" topic="SystemVarPHYLOWIDGET167" type="bracket" web="System"}%
+%META:LINK{name="26" address="System.SystemVarPHYLOWIDGET189" scope="internal" topic="SystemVarPHYLOWIDGET189" type="bracket" web="System"}%
+%META:LINK{name="2" address="System.VarNEXUSTREES" scope="internal" topic="VarNEXUSTREES" type="bracket" web="System"}%
+%META:LINK{name="12" address="System.SystemVarPHYLOWIDGET175" scope="internal" topic="SystemVarPHYLOWIDGET175" type="bracket" web="System"}%
+%META:LINK{name="29" address="System.PhyloWidget" scope="internal" topic="PhyloWidget" type="autolink" web="System"}%
+%META:LINK{name="14" address="System.SystemVarPHYLOWIDGET177" scope="internal" topic="SystemVarPHYLOWIDGET177" type="bracket" web="System"}%
+%META:LINK{name="9" address="System.SystemVarPHYLOWIDGET172" scope="internal" topic="SystemVarPHYLOWIDGET172" type="bracket" web="System"}%
+%META:LINK{name="11" address="System.SystemVarPHYLOWIDGET174" scope="internal" topic="SystemVarPHYLOWIDGET174" type="bracket" web="System"}%
+%META:LINK{name="25" address="System.SystemVarPHYLOWIDGET188" scope="internal" topic="SystemVarPHYLOWIDGET188" type="bracket" web="System"}%
+%META:LINK{name="13" address="System.SystemVarPHYLOWIDGET176" scope="internal" topic="SystemVarPHYLOWIDGET176" type="bracket" web="System"}%
+%META:LINK{name="1" address="System.PhyloWidgetPlugin" scope="internal" topic="PhyloWidgetPlugin" type="bracket" web="System"}%
+%META:LINK{name="10" address="System.SystemVarPHYLOWIDGET173" scope="internal" topic="SystemVarPHYLOWIDGET173" type="bracket" web="System"}%
+%META:LINK{name="27" address="System.SystemVarPHYLOWIDGET190" scope="internal" topic="SystemVarPHYLOWIDGET190" type="bracket" web="System"}%
+%META:LINK{name="8" address="System.SystemVarPHYLOWIDGET171" scope="internal" topic="SystemVarPHYLOWIDGET171" type="bracket" web="System"}%
 %META:PREFERENCE{name="PERM_ID_HUMAN" title="PERM_ID_HUMAN" type="Local" value="System_VarPHYLOWIDGET"}%
 %META:PREFERENCE{name="PERM_ID_MD5" title="PERM_ID_MD5" type="Local" value="40f683a9ba2e3ac69c11958c2d8d92f8"}%
 %META:SLPROPERTIES{num="0" value=""}%

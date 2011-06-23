@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
+<title>PhyloWidget</title>
+
+<link rel="stylesheet" href="style.css"/>
+<link rel="shortcut icon" href="img/pw.ico"/>
+<script src="scripts/phylowidget.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+	var totalWidth = PhyloWidget.getWidth()+300+50;
+	document.write('<div id="content-wrapper" style="width:'+totalWidth+'px;">');
+</script>
+<!-- <div id="content-wrapper"> -->
+
+<div id="content">
+
+<div id="floater" style="float:left;">
+	<h1>PhyloWidget Full</h1>
+	
+	<script type="text/javascript">
+		document.write('<div id="PhyloWidget" style="width:'+PhyloWidget.getWidth()+'px;">');
+	</script>
+	
+	<!-- <div id="PhyloWidget" style="width:400px;"> -->
+	</div>
+</div>
+	<div id="floater2" style="width:300px;float:right;">
+		<h1>PhyloWidget Full Toolbox (<a href="javascript:PhyloWidget.toggleToolbox();"><span id="hideshow">hide</span></a>)</h1>
+		<div id="toolbox"></div>
+	</div>
+	
+	<div style="width:300px;float:right;margin-top:15px;">
+	<h1>Problems?</h1>
+	Try visiting the <a href="../troubleshooting.html">Troubleshooting Page</a>
+	<p></p>
+	<h1>Confused?</h1>
+	Try browsing the <a href="../vignettes/index.html">Interactive Documentation</a>
+	<p></p>
+	<h1>Lost?</h1>
+	Head back to the <a href="../index.html">PhyloWidget Homepage</a>
+	</div>
+</div>
+
+<!-- BEGIN: JAVASCRIPT INSERTION -->
+<script type="text/javascript">
+	PhyloWidget.loadWidget('PhyloWidget');
+	PhyloWidget.loadToolbox('toolbox');
+	//PhyloWidget.loadWidgetPanel();
+</script>
+<!-- END: JAVASCRIPT INSERTION -->
+
+<div id="footer">
+Copyright � 2008 <a href="http://www.andrewberman.org/">Gregory Jordan</a>. Code released under the <a href="http://www.fsf.org/licensing/licenses/info/GPLv2.html">GPL</a> license.
+</div>
+
+<div id="footer2">
+Created with <a href="http://processing.org/">Processing</a>.
+</div>
+
+</div>
+</body>
+</html>

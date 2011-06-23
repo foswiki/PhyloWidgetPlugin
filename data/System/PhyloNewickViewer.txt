@@ -1,5 +1,10 @@
+%META:TOPICINFO{author="TemiV" comment="reprev" date="1308201619" format="1.1" version="3"}%
 %PHYLOWIDGET{"%theWeb%.%theTopic%" attachment="%theAttach%" UseBranchLengths="true"}%
-    * Set theWeb = %URLPARAM{"qweb"}%
-    * Set theTopic = %URLPARAM{"qtopic"}%
-    * Set theAttach = %URLPARAM{"qattach"}%
 
+   * Set theWeb = %URLPARAM{"qweb"}%
+   * Set theTopic = %URLPARAM{"qtopic"}%
+   * Set theAttach = %URLPARAM{"qattach"}%
+
+%META:LINK{name="1" address="System.UseBranchLengths" scope="internal" topic="UseBranchLengths" type="autolink" web="System"}%
+%META:PREFERENCE{name="PERM_ID_HUMAN" title="PERM_ID_HUMAN" type="Local" value="System_PhyloNewickViewer"}%
+%META:PREFERENCE{name="PERM_ID_MD5" title="PERM_ID_MD5" type="Local" value="63c19e37ec251dbcda79e093bcfd8aef"}%
