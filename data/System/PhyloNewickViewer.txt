@@ -4,6 +4,7 @@
    * Set theWeb = %URLPARAM{"qweb"}%
    * Set theTopic = %URLPARAM{"qtopic"}%
    * Set theAttach = %URLPARAM{"qattach"}%
+   * Set theGenus = %URLPARAM{"genus" default="%genus%"}%
 
 %META:LINK{name="1" address="System.UseBranchLengths" scope="internal" topic="UseBranchLengths" type="autolink" web="System"}%
 %META:PREFERENCE{name="PERM_ID_HUMAN" title="PERM_ID_HUMAN" type="Local" value="System_PhyloNewickViewer"}%
