@@ -441,7 +441,7 @@ sub TREEPNG {
       Foswiki::Func::getScriptUrl( 'System', 'PhyloNewickViewer', 'view' );
     my ( $width, $height ) = ( $params->{width}, $params->{height} );
     return
-"<a href='$topicURL?qweb=$params->{web};qtopic=$params->{topic};qattach=$params->{attach}'><img src='$rest/PhyloWidgetPlugin/getPNG?qweb=$params->{web};qtopic=$params->{topic};qattach=$params->{attach};rev=4;' height='$height' width='$width'/></a>";
+"<a href='$topicURL?qweb=$params->{web};qtopic=$params->{topic};qattach=$params->{attach};genus=$params->{genus}'><img src='$rest/PhyloWidgetPlugin/getPNG?qweb=$params->{web};qtopic=$params->{topic};qattach=$params->{attach};rev=$params->{rev}' height='$height' width='$width'/></a>";
 
 }
 
