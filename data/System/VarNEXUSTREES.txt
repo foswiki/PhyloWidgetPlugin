@@ -1,4 +1,4 @@
-%META:TOPICINFO{author="ProjectContributor" format="1.1" version="$Rev$"}%
+%META:TOPICINFO{author="ProjectContributor" format="1.1" date="1311627258"}%
 %META:TOPICPARENT{name="PhyloWidgetPlugin"}%
 #VarNEXUSTREES
 ---+++ NEXUSTREES{"Topic"} -- display phylogeny
